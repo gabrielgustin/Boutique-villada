@@ -4,7 +4,6 @@ import Link from "next/link"
 import { ArrowUpRight, BookOpen, CalendarCheck, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
-import { getStoreInfo } from "@/lib/db"
 
 export const metadata: Metadata = {
   title: "Boutique ITS Villada",
@@ -20,6 +19,10 @@ export const metadata: Metadata = {
 // Sistema de turnos de otro proveedor: se enlaza tal cual, sin tocarlo.
 const BOOKING_URL = "https://turnostiin.vercel.app/boutiqueitsvillada"
 const INSTAGRAM_URL = "https://www.instagram.com/boutiqueits"
+
+// Ubicación: la boutique funciona en el Instituto Técnico Salesiano Villada (Córdoba).
+const ADDRESS = "Instituto Técnico Salesiano Villada\nCamino a La Calera, Km 7,5 · Valle Escondido, Córdoba"
+const MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Instituto Técnico Salesiano Villada, Camino a La Calera Km 7.5, Córdoba")}`
 
 const OFFERS: { title: string; text: string; Icon: LucideIcon }[] = [
   { title: "Uniformes del colegio", text: "Todo el equipo para el ciclo lectivo.", Icon: Shirt },
@@ -54,21 +57,10 @@ function getStatus(now: Date) {
   return { weekday, open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
 }
 
-/** Dirección del local si el dueño la cargó en el panel; sin base de datos la landing sigue funcionando. */
-async function getLocation() {
-  try {
-    const { address, mapUrl } = await getStoreInfo()
-    return { address, mapUrl }
-  } catch {
-    return { address: null, mapUrl: null }
-  }
-}
-
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
-export default async function LandingPage() {
+export default function LandingPage() {
   const status = getStatus(new Date())
-  const { address, mapUrl } = await getLocation()
   const days: HoursDay[] = WEEK.map(({ key, label }) => ({
     label,
     hours: WORKDAYS.includes(key) ? `${OPEN_HOUR}:00 a ${CLOSE_HOUR}:00 hs` : null,
@@ -160,7 +152,7 @@ export default async function LandingPage() {
 
         {/* Datos y redes */}
         <section aria-label="Información" className="mt-6 grid gap-3 sm:grid-cols-2">
-          <HoursDialog days={days} open={status.open} statusLabel={status.label} address={address} mapUrl={mapUrl} bookingUrl={BOOKING_URL} />
+          <HoursDialog days={days} open={status.open} statusLabel={status.label} address={ADDRESS} mapUrl={MAP_URL} bookingUrl={BOOKING_URL} />
 
           <a
             href={INSTAGRAM_URL}

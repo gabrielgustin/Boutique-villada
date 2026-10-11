@@ -102,7 +102,7 @@ export function HoursDialog({ days, open, statusLabel, address, mapUrl, bookingU
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#d8392b]" aria-hidden />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">Dónde estamos</p>
-                  <p className="text-neutral-600">{address}</p>
+                  <p className="whitespace-pre-line text-neutral-600">{address}</p>
                   {mapUrl && (
                     <a href={mapUrl} target="_blank" rel="noopener noreferrer" className={`mt-2 inline-flex items-center gap-1 font-semibold text-[#231c6b] hover:underline ${focus}`}>
                       Cómo llegar <ArrowUpRight className="h-4 w-4" aria-hidden />
