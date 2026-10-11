@@ -9,9 +9,9 @@ export default async function CodigoQRPage() {
   const [store, theme, requestHeaders] = await Promise.all([getStoreInfo(), getTheme(), headers()])
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000"
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https")
-  // El QR abre la página de presentación (la portada del sitio); desde ahí se entra a la tienda en /app.
+  // El QR de la app abre directo la tienda (/app), no la página de presentación.
   // Usa la dirección oficial si está configurada; si no, la que se está usando ahora.
-  const url = (process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`).replace(/\/$/, "")
+  const url = (process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`).replace(/\/$/, "") + "/app"
   const logoUrl = theme.logoUrl ?? store.logoUrl ?? DEFAULT_LOGO_URL
 
   return (
