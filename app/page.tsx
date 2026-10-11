@@ -97,7 +97,7 @@ export default async function LandingPage() {
         </header>
 
         {/* Acciones principales */}
-        <section aria-label="Accesos principales" className="mt-10 grid gap-4 sm:grid-cols-2 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
+        <section aria-label="Accesos principales" className="mt-10 grid auto-rows-fr gap-4 sm:grid-cols-2 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
           <a
             href={BOOKING_URL}
             target="_blank"
