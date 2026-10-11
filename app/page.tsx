@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { BookOpen, CalendarDays, ChevronRight, FileText, Instagram, MessageCircle, ShoppingBag } from "lucide-react"
+import { CalendarDays, ChevronRight, Instagram, ShoppingBag } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Boutique ITS Villada",
-  description: "Uniformes del colegio, herramientas de taller y librería técnica. Reservá tu turno, mirá la lista de precios o hacé tu pedido online.",
+  description: "Uniformes del colegio, herramientas de taller y librería técnica. Reservá tu turno o hacé tu pedido online.",
   openGraph: {
     title: "Boutique ITS Villada",
     description: "Uniformes del colegio, herramientas de taller y librería técnica.",
@@ -24,22 +24,7 @@ type LinkItem = { label: string; href: string; Icon: LucideIcon; external?: bool
 
 const LINKS: LinkItem[] = [
   { label: "Tienda online", href: "/app", Icon: ShoppingBag, tone: "text-blue-700 bg-blue-50" },
-  {
-    label: "Lista de Precios",
-    href: "https://drive.google.com/file/d/1oijz_FW2yI4xsCP3kQn-By-Z5l_9NiTP/view?usp=drive_link",
-    Icon: FileText,
-    external: true,
-    tone: "text-indigo-700 bg-indigo-50",
-  },
-  {
-    label: "Catálogo",
-    href: "https://drive.google.com/file/d/1tqUrIhE-XLddm5Gdlh-KXUgu8HiQcCgh/view?usp=drive_link",
-    Icon: BookOpen,
-    external: true,
-    tone: "text-violet-700 bg-violet-50",
-  },
   { label: "Instagram", href: "https://www.instagram.com/boutiqueits", Icon: Instagram, external: true, tone: "text-pink-700 bg-pink-50" },
-  { label: "WhatsApp", href: "https://wa.me/543513862108", Icon: MessageCircle, external: true, tone: "text-green-700 bg-green-50" },
 ]
 
 const card =
