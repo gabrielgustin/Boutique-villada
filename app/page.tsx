@@ -41,17 +41,15 @@ function getStatus(now: Date) {
   return { open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
 }
 
-const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2b2a82]"
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
 export default function LandingPage() {
   const status = getStatus(new Date())
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f6f7fb] text-[#14163a]">
-      {/* Fondo decorativo con los colores del logo */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-gradient-to-b from-[#2b2a82] to-[#3a39a3] [clip-path:ellipse(120%_100%_at_50%_0%)]" />
-      <div aria-hidden className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-[#d8392b]/30 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -left-24 top-32 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+      {/* Fondo en el azul del logo */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] bg-[#231c6b] [clip-path:ellipse(120%_100%_at_50%_0%)]" />
 
       <div className="relative mx-auto flex w-full max-w-3xl flex-col px-5 pb-10 pt-10 sm:pt-14">
         {/* Encabezado */}
@@ -60,13 +58,10 @@ export default function LandingPage() {
             <Image src="/logo-its-boutique.png" alt="Logo de Boutique ITS Villada" width={640} height={477} priority className="h-auto w-[4.75rem]" />
           </div>
 
-          <h1 className="title-font mt-6 text-balance text-5xl uppercase leading-none tracking-wide text-white sm:text-6xl">
-            Boutique <span className="text-[#ff8f84]">ITS</span> Villada
-          </h1>
-          <p className="mt-3 max-w-md text-balance text-base text-white/80 sm:text-lg">Todo para tu cursada, en un solo lugar.</p>
+          <h1 className="sr-only">Boutique ITS Villada</h1>
 
           <p
-            className={`mt-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm ${
+            className={`mt-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm ${
               status.open ? "bg-white text-emerald-700" : "bg-white/90 text-neutral-700"
             }`}
           >
@@ -81,16 +76,16 @@ export default function LandingPage() {
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#2b2a82]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
+            className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#231c6b]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
           >
-            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#2b2a82]" />
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#2b2a82] text-white">
+            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#231c6b]" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#231c6b] text-white">
               <CalendarCheck className="h-6 w-6" aria-hidden />
             </span>
             <span className="min-w-0 flex-1">
               <span className="flex items-center justify-between gap-2 text-xl font-bold">
                 Turnos Boutique
-                <ArrowUpRight className="h-5 w-5 shrink-0 text-[#2b2a82] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-[#231c6b] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </span>
               <span className="mt-1 block text-neutral-600">Reservá tu horario de atención · 60 minutos · Presencial</span>
             </span>
@@ -116,13 +111,13 @@ export default function LandingPage() {
 
         {/* Qué encontrás */}
         <section aria-labelledby="que-encontras" className="mt-12">
-          <h2 id="que-encontras" className="text-sm font-semibold uppercase tracking-widest text-[#2b2a82]">
+          <h2 id="que-encontras" className="text-sm font-semibold uppercase tracking-widest text-[#231c6b]">
             Qué encontrás
           </h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-3">
             {OFFERS.map(({ title, text, Icon }) => (
               <li key={title} className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 sm:flex-col sm:gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#2b2a82]/10 text-[#2b2a82]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#231c6b]/10 text-[#231c6b]">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
                 <div>
