@@ -4,6 +4,8 @@ import Link from "next/link"
 import { ArrowUpRight, BookOpen, CalendarCheck, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
+import { WhatsAppFloatingButton } from "@/components/landing/whatsapp-button"
+import { getStoreInfo } from "@/lib/db"
 
 export const metadata: Metadata = {
   title: "Boutique ITS Villada",
@@ -57,10 +59,20 @@ function getStatus(now: Date) {
   return { weekday, open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
 }
 
+/** WhatsApp del negocio: el mismo que usa la tienda (/app), cargado en el panel. Sin él, no se muestra el botón. */
+async function getWhatsAppUrl() {
+  try {
+    return (await getStoreInfo()).whatsappUrl
+  } catch {
+    return null
+  }
+}
+
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
-export default function LandingPage() {
+export default async function LandingPage() {
   const status = getStatus(new Date())
+  const whatsappUrl = await getWhatsAppUrl()
   const days: HoursDay[] = WEEK.map(({ key, label }) => ({
     label,
     hours: WORKDAYS.includes(key) ? `${OPEN_HOUR}:00 a ${CLOSE_HOUR}:00 hs` : null,
@@ -175,6 +187,8 @@ export default function LandingPage() {
           <p>© {new Date().getFullYear()} Boutique ITS Villada</p>
         </footer>
       </div>
+
+      {whatsappUrl && <WhatsAppFloatingButton href={whatsappUrl} />}
     </main>
   )
 }
