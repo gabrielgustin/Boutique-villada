@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, BookOpen, CalendarCheck, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import { ArrowUpRight, CalendarCheck, Instagram, ShoppingBag } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
 import { WhatsAppFloatingButton } from "@/components/landing/whatsapp-button"
 import { getStoreInfo } from "@/lib/db"
@@ -25,12 +24,6 @@ const INSTAGRAM_URL = "https://www.instagram.com/boutiqueits"
 // Ubicación: la boutique funciona en el Instituto Técnico Salesiano Villada (Córdoba).
 const ADDRESS = "Instituto Técnico Salesiano Villada\nCamino a La Calera, Km 7,5 · Valle Escondido, Córdoba"
 const MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Instituto Técnico Salesiano Villada, Camino a La Calera Km 7.5, Córdoba")}`
-
-const OFFERS: { title: string; text: string; Icon: LucideIcon }[] = [
-  { title: "Uniformes del colegio", text: "Todo el equipo para el ciclo lectivo.", Icon: Shirt },
-  { title: "Herramientas de taller", text: "Lo que necesitás para las prácticas.", Icon: Wrench },
-  { title: "Librería técnica y apuntes", text: "Libros, carpetas y material de cursada.", Icon: BookOpen },
-]
 
 // Lunes a viernes de 8 a 16 hs, hora de Córdoba (el servidor puede estar en otra zona).
 const OPEN_HOUR = 8
@@ -142,28 +135,8 @@ export default async function LandingPage() {
           </Link>
         </section>
 
-        {/* Qué encontrás */}
-        <section aria-labelledby="que-encontras" className="mt-12">
-          <h2 id="que-encontras" className="text-sm font-semibold uppercase tracking-widest text-[#231c6b]">
-            Qué encontrás
-          </h2>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-            {OFFERS.map(({ title, text, Icon }) => (
-              <li key={title} className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 sm:flex-col sm:gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#231c6b]/10 text-[#231c6b]">
-                  <Icon className="h-5 w-5" aria-hidden />
-                </span>
-                <div>
-                  <p className="font-semibold leading-snug">{title}</p>
-                  <p className="mt-0.5 text-sm text-neutral-600">{text}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-
         {/* Datos y redes */}
-        <section aria-label="Información" className="mt-6 grid gap-3 sm:grid-cols-2">
+        <section aria-label="Información" className="mt-8 grid gap-3 sm:grid-cols-2">
           <HoursDialog days={days} open={status.open} statusLabel={status.label} address={ADDRESS} mapUrl={MAP_URL} bookingUrl={BOOKING_URL} />
 
           <a
