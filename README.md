@@ -29,7 +29,7 @@ No hay que tocar código: `lib/sql.ts` elige PGlite o Postgres según exista `DA
 | Carpeta | Qué hay |
 |---|---|
 | `app/page.tsx` | Landing de la portada |
-| `app/app/(tienda)` | Tienda pública (rutas bajo `/app`) | |
+| `app/app/(tienda)` | Tienda pública (rutas bajo `/app`) |
 | `app/backoffice` | Panel de administración (protegido por sesión) |
 | `app/api` | `/api/orders`, `/api/coupons/validate`, `/api/search` (públicas) y `/api/backoffice/*` (solo con sesión) |
 | `lib/sql.ts` | Única puerta a la base de datos (+ migraciones y datos demo en local) |
