@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, BookOpen, CalendarCheck, Clock, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
+import { ArrowUpRight, BookOpen, CalendarCheck, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
+import { getStoreInfo } from "@/lib/db"
 
 export const metadata: Metadata = {
   title: "Boutique ITS Villada",
@@ -30,21 +32,48 @@ const OPEN_HOUR = 8
 const CLOSE_HOUR = 16
 const TIME_ZONE = "America/Argentina/Cordoba"
 
+const WEEK = [
+  { key: "Mon", label: "Lunes" },
+  { key: "Tue", label: "Martes" },
+  { key: "Wed", label: "Miércoles" },
+  { key: "Thu", label: "Jueves" },
+  { key: "Fri", label: "Viernes" },
+  { key: "Sat", label: "Sábado" },
+  { key: "Sun", label: "Domingo" },
+]
+const WORKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+
 function getStatus(now: Date) {
   const parts = new Intl.DateTimeFormat("en-US", { timeZone: TIME_ZONE, weekday: "short", hour: "numeric", hour12: false }).formatToParts(now)
   const weekday = parts.find((part) => part.type === "weekday")?.value ?? "Mon"
   const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0) % 24
-  const isWeekday = ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(weekday)
+  const isWorkday = WORKDAYS.includes(weekday)
 
-  if (isWeekday && hour >= OPEN_HOUR && hour < CLOSE_HOUR) return { open: true, label: `Abierto ahora · hasta las ${CLOSE_HOUR} hs` }
+  if (isWorkday && hour >= OPEN_HOUR && hour < CLOSE_HOUR) return { weekday, open: true, label: `Abierto ahora · hasta las ${CLOSE_HOUR} hs` }
   const nextDay = weekday === "Fri" && hour >= CLOSE_HOUR ? "el lunes" : weekday === "Sat" || weekday === "Sun" ? "el lunes" : hour >= CLOSE_HOUR ? "mañana" : "hoy"
-  return { open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
+  return { weekday, open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
+}
+
+/** Dirección del local si el dueño la cargó en el panel; sin base de datos la landing sigue funcionando. */
+async function getLocation() {
+  try {
+    const { address, mapUrl } = await getStoreInfo()
+    return { address, mapUrl }
+  } catch {
+    return { address: null, mapUrl: null }
+  }
 }
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
-export default function LandingPage() {
+export default async function LandingPage() {
   const status = getStatus(new Date())
+  const { address, mapUrl } = await getLocation()
+  const days: HoursDay[] = WEEK.map(({ key, label }) => ({
+    label,
+    hours: WORKDAYS.includes(key) ? `${OPEN_HOUR}:00 a ${CLOSE_HOUR}:00 hs` : null,
+    today: key === status.weekday,
+  }))
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f6f7fb] text-[#14163a]">
@@ -131,15 +160,7 @@ export default function LandingPage() {
 
         {/* Datos y redes */}
         <section aria-label="Información" className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#d8392b]/10 text-[#d8392b]">
-              <Clock className="h-5 w-5" aria-hidden />
-            </span>
-            <div>
-              <p className="font-semibold">Horario de atención</p>
-              <p className="text-sm text-neutral-600">Lunes a viernes de 8 a 16 hs</p>
-            </div>
-          </div>
+          <HoursDialog days={days} open={status.open} statusLabel={status.label} address={address} mapUrl={mapUrl} bookingUrl={BOOKING_URL} />
 
           <a
             href={INSTAGRAM_URL}
