@@ -154,9 +154,8 @@ export default async function LandingPage() {
           </a>
         </section>
 
-        <footer className="mt-12 text-center text-sm text-neutral-500">
-          <p>© {new Date().getFullYear()} Boutique ITS Villada</p>
-        </footer>
+        {/* Espacio al final para que el botón flotante de WhatsApp no tape la última tarjeta. */}
+        <div className="h-24" aria-hidden />
       </div>
 
       {whatsappUrl && <WhatsAppFloatingButton href={whatsappUrl} />}
