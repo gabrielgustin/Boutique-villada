@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { CalendarDays, ChevronRight, Instagram, ShoppingBag } from "lucide-react"
+import { ArrowUpRight, BookOpen, CalendarCheck, Clock, Instagram, ShoppingBag, Shirt, Wrench } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -17,84 +17,156 @@ export const metadata: Metadata = {
 
 // Sistema de turnos de otro proveedor: se enlaza tal cual, sin tocarlo.
 const BOOKING_URL = "https://turnostiin.vercel.app/boutiqueitsvillada"
+const INSTAGRAM_URL = "https://www.instagram.com/boutiqueits"
 
-const OFFERS = ["Uniformes del Colegio", "Herramientas de Taller", "Librería Técnica y Apuntes"]
-
-type LinkItem = { label: string; href: string; Icon: LucideIcon; external?: boolean; tone: string }
-
-const LINKS: LinkItem[] = [
-  { label: "Tienda online", href: "/app", Icon: ShoppingBag, tone: "text-blue-700 bg-blue-50" },
-  { label: "Instagram", href: "https://www.instagram.com/boutiqueits", Icon: Instagram, external: true, tone: "text-pink-700 bg-pink-50" },
+const OFFERS: { title: string; text: string; Icon: LucideIcon }[] = [
+  { title: "Uniformes del colegio", text: "Todo el equipo para el ciclo lectivo.", Icon: Shirt },
+  { title: "Herramientas de taller", text: "Lo que necesitás para las prácticas.", Icon: Wrench },
+  { title: "Librería técnica y apuntes", text: "Libros, carpetas y material de cursada.", Icon: BookOpen },
 ]
 
-const card =
-  "group flex items-center gap-4 rounded-2xl border border-black/5 bg-white/80 px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+// Lunes a viernes de 8 a 16 hs, hora de Córdoba (el servidor puede estar en otra zona).
+const OPEN_HOUR = 8
+const CLOSE_HOUR = 16
+const TIME_ZONE = "America/Argentina/Cordoba"
+
+function getStatus(now: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: TIME_ZONE, weekday: "short", hour: "numeric", hour12: false }).formatToParts(now)
+  const weekday = parts.find((part) => part.type === "weekday")?.value ?? "Mon"
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0) % 24
+  const isWeekday = ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(weekday)
+
+  if (isWeekday && hour >= OPEN_HOUR && hour < CLOSE_HOUR) return { open: true, label: `Abierto ahora · hasta las ${CLOSE_HOUR} hs` }
+  const nextDay = weekday === "Fri" && hour >= CLOSE_HOUR ? "el lunes" : weekday === "Sat" || weekday === "Sun" ? "el lunes" : hour >= CLOSE_HOUR ? "mañana" : "hoy"
+  return { open: false, label: `Cerrado ahora · abre ${nextDay} a las ${OPEN_HOUR} hs` }
+}
+
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2b2a82]"
 
 export default function LandingPage() {
+  const status = getStatus(new Date())
+
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-white via-white to-indigo-50/60 px-4 pb-8 pt-12 text-neutral-900 sm:pt-16">
-      <div className="flex w-full max-w-md flex-1 flex-col items-center">
-        <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-black/5">
-          <Image src="/logo-its-boutique.png" alt="Logo de Boutique ITS Villada" width={640} height={477} priority className="h-auto w-20" />
-        </div>
+    <main className="relative min-h-screen overflow-hidden bg-[#f6f7fb] text-[#14163a]">
+      {/* Fondo decorativo con los colores del logo */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-gradient-to-b from-[#2b2a82] to-[#3a39a3] [clip-path:ellipse(120%_100%_at_50%_0%)]" />
+      <div aria-hidden className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-[#d8392b]/30 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-32 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-        <h1 className="mt-6 text-balance text-center text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-5xl">
-          Boutique ITS Villada
-        </h1>
+      <div className="relative mx-auto flex w-full max-w-3xl flex-col px-5 pb-10 pt-10 sm:pt-14">
+        {/* Encabezado */}
+        <header className="flex flex-col items-center text-center motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3 motion-safe:duration-500">
+          <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white shadow-xl ring-4 ring-white/30">
+            <Image src="/logo-its-boutique.png" alt="Logo de Boutique ITS Villada" width={640} height={477} priority className="h-auto w-[4.75rem]" />
+          </div>
 
-        <div className="mt-5 space-y-1.5 text-center text-neutral-600">
-          <p>Bienvenidos a la Boutique del ITS Villada</p>
-          <p>Horarios de atención: lunes a viernes de 8 a 16 hs</p>
-          <ul className="pt-1">
-            {OFFERS.map((offer) => (
-              <li key={offer}>
-                <span aria-hidden>☀️</span> {offer}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <h1 className="title-font mt-6 text-balance text-5xl uppercase leading-none tracking-wide text-white sm:text-6xl">
+            Boutique <span className="text-[#ff8f84]">ITS</span> Villada
+          </h1>
+          <p className="mt-3 max-w-md text-balance text-base text-white/80 sm:text-lg">Todo para tu cursada, en un solo lugar.</p>
 
-        <nav aria-label="Accesos" className="mt-8 flex w-full flex-col gap-3">
+          <p
+            className={`mt-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm ${
+              status.open ? "bg-white text-emerald-700" : "bg-white/90 text-neutral-700"
+            }`}
+          >
+            <span aria-hidden className={`h-2 w-2 rounded-full ${status.open ? "bg-emerald-500 motion-safe:animate-pulse" : "bg-neutral-400"}`} />
+            {status.label}
+          </p>
+        </header>
+
+        {/* Acciones principales */}
+        <section aria-label="Accesos principales" className="mt-10 grid gap-4 sm:grid-cols-2 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
           <a
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-4 rounded-2xl bg-gradient-to-r from-neutral-900 via-indigo-950 to-indigo-700 px-5 py-4 text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#2b2a82]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
-              <CalendarDays className="h-5 w-5" aria-hidden />
+            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#2b2a82]" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#2b2a82] text-white">
+              <CalendarCheck className="h-6 w-6" aria-hidden />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-semibold">Turnos Boutique</span>
-              <span className="block text-sm text-white/75">60 minutos • Presencial</span>
+              <span className="flex items-center justify-between gap-2 text-xl font-bold">
+                Turnos Boutique
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-[#2b2a82] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+              </span>
+              <span className="mt-1 block text-neutral-600">Reservá tu horario de atención · 60 minutos · Presencial</span>
             </span>
-            <ChevronRight className="h-5 w-5 shrink-0 transition group-hover:translate-x-0.5" aria-hidden />
           </a>
 
-          {LINKS.map(({ label, href, Icon, external, tone }) => {
-            const content = (
-              <>
-                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
+          <Link
+            href="/app"
+            className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#d8392b]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
+          >
+            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#d8392b]" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#d8392b] text-white">
+              <ShoppingBag className="h-6 w-6" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center justify-between gap-2 text-xl font-bold">
+                Tienda online
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-[#d8392b] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+              </span>
+              <span className="mt-1 block text-neutral-600">Mirá los productos y armá tu pedido online.</span>
+            </span>
+          </Link>
+        </section>
+
+        {/* Qué encontrás */}
+        <section aria-labelledby="que-encontras" className="mt-12">
+          <h2 id="que-encontras" className="text-sm font-semibold uppercase tracking-widest text-[#2b2a82]">
+            Qué encontrás
+          </h2>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+            {OFFERS.map(({ title, text, Icon }) => (
+              <li key={title} className="flex items-start gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 sm:flex-col sm:gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#2b2a82]/10 text-[#2b2a82]">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
-                <span className="min-w-0 flex-1 font-medium">{label}</span>
-                <ChevronRight className="h-5 w-5 shrink-0 text-neutral-400 transition group-hover:translate-x-0.5" aria-hidden />
-              </>
-            )
-            return external ? (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={card}>
-                {content}
-              </a>
-            ) : (
-              <Link key={label} href={href} className={card}>
-                {content}
-              </Link>
-            )
-          })}
-        </nav>
-      </div>
+                <div>
+                  <p className="font-semibold leading-snug">{title}</p>
+                  <p className="mt-0.5 text-sm text-neutral-600">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <footer className="mt-10 text-sm text-neutral-500">© {new Date().getFullYear()} Boutique ITS Villada</footer>
+        {/* Datos y redes */}
+        <section aria-label="Información" className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#d8392b]/10 text-[#d8392b]">
+              <Clock className="h-5 w-5" aria-hidden />
+            </span>
+            <div>
+              <p className="font-semibold">Horario de atención</p>
+              <p className="text-sm text-neutral-600">Lunes a viernes de 8 a 16 hs</p>
+            </div>
+          </div>
+
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md ${focus}`}
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white">
+              <Instagram className="h-5 w-5" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">Seguinos en Instagram</p>
+              <p className="text-sm text-neutral-600">@boutiqueits</p>
+            </div>
+            <ArrowUpRight className="h-5 w-5 shrink-0 text-neutral-400 transition group-hover:text-neutral-700" aria-hidden />
+          </a>
+        </section>
+
+        <footer className="mt-12 text-center text-sm text-neutral-500">
+          <p>© {new Date().getFullYear()} Boutique ITS Villada</p>
+        </footer>
+      </div>
     </main>
   )
 }
