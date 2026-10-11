@@ -49,7 +49,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
 
   return (
     <>
-    <TitleBar title="Tu pedido" backHref="/" />
+    <TitleBar title="Tu pedido" backHref="/app" />
     <PageBody narrow>
     <div className="space-y-5">
       <header className="st-card p-5 text-center md:p-8">
@@ -153,7 +153,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
 
       <p className="text-center text-xs text-st-muted">Guardá este enlace para seguir el estado de tu pedido.</p>
       <div className="text-center">
-        <Link href="/" className="st-btn-outline st-focus">
+        <Link href="/app" className="st-btn-outline st-focus">
           Seguir comprando
         </Link>
       </div>

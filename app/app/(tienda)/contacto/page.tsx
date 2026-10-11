@@ -20,7 +20,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <TitleBar title="Información" backHref="/" />
+      <TitleBar title="Información" backHref="/app" />
       <PageBody>
       <div className="grid gap-5 md:grid-cols-2">
         <section className="st-card p-5">

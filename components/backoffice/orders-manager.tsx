@@ -237,7 +237,7 @@ export function OrdersManager({ initial, initialFilter, storeName }: { initial: 
                       <a href={whatsappHref(order)} target="_blank" rel="noopener noreferrer" className="ml-auto inline-flex items-center gap-2 rounded-md bg-[#25d366] px-3.5 py-2 text-sm font-semibold text-[#0b3d1f] transition hover:brightness-105">
                         <MessageCircle className="h-4 w-4" aria-hidden /> Escribir al cliente
                       </a>
-                      <a href={`/pedido/${order.token}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium text-gray-700 ring-1 ring-gray-200 transition hover:text-[#1e4b8e]">
+                      <a href={`/app/pedido/${order.token}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium text-gray-700 ring-1 ring-gray-200 transition hover:text-[#1e4b8e]">
                         <ExternalLink className="h-4 w-4" aria-hidden /> Ver como cliente
                       </a>
                     </div>

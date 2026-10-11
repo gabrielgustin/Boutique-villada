@@ -44,7 +44,7 @@ export function CategoryGrid({ categories }: { categories: CatalogCategory[] }) 
       <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         {categories.map((category, index) => (
           <li key={category.id}>
-            <Link href={`/productos/${category.id}`} className="group relative block overflow-hidden rounded-st bg-st-text/5 st-focus" style={{ aspectRatio: "var(--st-image-ratio)" }}>
+            <Link href={`/app/productos/${category.id}`} className="group relative block overflow-hidden rounded-st bg-st-text/5 st-focus" style={{ aspectRatio: "var(--st-image-ratio)" }}>
               <StoreImage src={category.image_url} alt="" fill sizes="(min-width: 768px) 25vw, 50vw" priority={index < 4} className="object-cover transition duration-500 group-hover:scale-105" />
               <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden />
               {showDiscountBadge && category.max_discount ? <span className="st-off absolute left-2 top-2">Hasta {Math.round(category.max_discount)}% OFF</span> : null}
@@ -62,7 +62,7 @@ export function CategoryGrid({ categories }: { categories: CatalogCategory[] }) 
     <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category, index) => (
         <li key={category.id}>
-          <Link href={`/productos/${category.id}`} className="group relative flex h-36 flex-col items-center justify-center gap-2 overflow-hidden rounded-st bg-st-text/10 px-4 text-center shadow-[var(--st-shadow)] md:h-40 st-focus">
+          <Link href={`/app/productos/${category.id}`} className="group relative flex h-36 flex-col items-center justify-center gap-2 overflow-hidden rounded-st bg-st-text/10 px-4 text-center shadow-[var(--st-shadow)] md:h-40 st-focus">
             <StoreImage src={category.image_url} alt="" fill sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" priority={index < 3} className="object-cover transition duration-500 group-hover:scale-105" />
             <span className="absolute inset-0 bg-black/35" aria-hidden />
             <span className="relative max-w-full text-balance text-2xl font-extrabold leading-tight text-white md:text-[1.7rem]" style={textShadow}>
@@ -187,7 +187,7 @@ export function CategoryProducts({ title, products, subcategories }: { title: st
 
   return (
     <>
-      <TitleBar title={title} backHref="/" share />
+      <TitleBar title={title} backHref="/app" share />
 
       {/* Filtros: se deslizan de costado y quedan fijos al bajar. */}
       {(chips.length > 0 || products.length > 1) && (

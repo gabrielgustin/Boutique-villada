@@ -10,9 +10,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!base) return []
   const [categories, products] = await Promise.all([getCategories(), getProducts()])
   return [
-    { url: base, changeFrequency: "daily", priority: 1 },
-    { url: `${base}/contacto`, changeFrequency: "monthly", priority: 0.3 },
-    ...categories.map((category) => ({ url: `${base}/productos/${category.id}`, changeFrequency: "daily" as const, priority: 0.8 })),
+    { url: base, changeFrequency: "monthly", priority: 1 },
+    { url: `${base}/app`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/app/contacto`, changeFrequency: "monthly", priority: 0.3 },
+    ...categories.map((category) => ({ url: `${base}/app/productos/${category.id}`, changeFrequency: "daily" as const, priority: 0.8 })),
     ...products.map((product) => ({ url: `${base}${productHref(product)}`, changeFrequency: "weekly" as const, priority: 0.6 })),
   ]
 }

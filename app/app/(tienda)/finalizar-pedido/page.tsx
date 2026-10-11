@@ -10,7 +10,7 @@ export default async function CheckoutPage() {
 
   return (
     <>
-      <TitleBar title="Finalizar pedido" backHref="/carrito" />
+      <TitleBar title="Finalizar pedido" backHref="/app/carrito" />
       <PageBody>
         <CheckoutForm options={options} canOrder={status.canOrder} />
       </PageBody>

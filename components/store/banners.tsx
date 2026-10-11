@@ -21,7 +21,7 @@ export function PromoBanner({ text }: { text: string }) {
 
 export function ClosedBanner({ canOrder }: { canOrder: boolean }) {
   return (
-    <Link href="/contacto" className="mb-5 flex items-center gap-3 rounded-st bg-st-secondary px-4 py-3 text-st-secondary-fg transition hover:brightness-95 st-focus">
+    <Link href="/app/contacto" className="mb-5 flex items-center gap-3 rounded-st bg-st-secondary px-4 py-3 text-st-secondary-fg transition hover:brightness-95 st-focus">
       <Clock className="h-5 w-5 shrink-0" aria-hidden />
       <span className="min-w-0 flex-1 text-sm leading-snug">
         <span className="block font-semibold">En este momento estamos cerrados</span>

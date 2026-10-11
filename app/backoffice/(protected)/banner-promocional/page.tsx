@@ -180,7 +180,7 @@ export default function BannerPromocionalPage() {
                         
                         <iframe
                           ref={frame}
-                          src="/"
+                          src="/app"
                           onLoad={sendDraft}
                           className="w-full h-[600px] border-0"
                           title="Vista previa ilustrativa de la aplicación"

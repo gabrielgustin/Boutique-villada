@@ -26,8 +26,8 @@ const iconButton = "relative inline-flex h-11 w-11 items-center justify-center r
 /** Pantallas con su propia barra de acción al pie: ahí no va "Ver mi pedido". */
 function useFocusedFlow() {
   const pathname = usePathname()
-  const isProduct = pathname.split("/").filter(Boolean).length === 3 && pathname.startsWith("/productos/")
-  return isProduct || pathname === "/carrito" || pathname === "/finalizar-pedido" || pathname.startsWith("/pedido/")
+  const isProduct = pathname.split("/").filter(Boolean).length === 4 && pathname.startsWith("/app/productos/")
+  return isProduct || pathname === "/app/carrito" || pathname === "/app/finalizar-pedido" || pathname.startsWith("/app/pedido/")
 }
 
 export function StoreShell({ store }: { store: StoreInfo }) {
@@ -54,7 +54,7 @@ export function StoreShell({ store }: { store: StoreInfo }) {
             <Menu className="h-8 w-8" strokeWidth={2.5} aria-hidden />
           </button>
 
-          <Link href="/" aria-label={`${store.siteName}: inicio`} className={cn("flex min-w-0 items-center rounded st-focus", centered ? "absolute left-1/2 -translate-x-1/2" : "ml-1")}>
+          <Link href="/app" aria-label={`${store.siteName}: inicio`} className={cn("flex min-w-0 items-center rounded st-focus", centered ? "absolute left-1/2 -translate-x-1/2" : "ml-1")}>
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logo} alt={store.siteName} className="w-auto max-w-[12rem] object-contain" style={{ height: "var(--st-logo-h)" }} />
@@ -64,7 +64,7 @@ export function StoreShell({ store }: { store: StoreInfo }) {
           </Link>
 
           <div className="ml-auto hidden items-center md:flex">
-            <Link href="/carrito" className={iconButton} aria-label={count > 0 ? `Carrito: ${count} productos` : "Carrito"}>
+            <Link href="/app/carrito" className={iconButton} aria-label={count > 0 ? `Carrito: ${count} productos` : "Carrito"}>
               <ShoppingCart className="h-7 w-7" strokeWidth={2.4} aria-hidden />
               {count > 0 && <span key={count} className="st-pop absolute right-1 top-1.5 h-3 w-3 rounded-full bg-st-header-fg" aria-hidden />}
             </Link>
@@ -130,10 +130,10 @@ function SideMenu({ open, onClose, store }: { open: boolean; onClose: () => void
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 pb-6">
-          <Link href="/" className={item}>
+          <Link href="/app" className={item}>
             <Home className="h-6 w-6" aria-hidden /> Inicio
           </Link>
-          <Link href="/contacto" className={item}>
+          <Link href="/app/contacto" className={item}>
             <Info className="h-6 w-6" aria-hidden /> Información
           </Link>
           {external.map(({ href, label, Icon }) => (
@@ -265,7 +265,7 @@ function CartBar() {
   if (!ready || count === 0) return null
 
   return (
-    <Link href="/carrito" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 bg-st-secondary text-st-secondary-fg shadow-[0_-3px_12px_rgba(0,0,0,0.12)] st-focus md:bottom-0 md:pb-[env(safe-area-inset-bottom)]">
+    <Link href="/app/carrito" className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 bg-st-secondary text-st-secondary-fg shadow-[0_-3px_12px_rgba(0,0,0,0.12)] st-focus md:bottom-0 md:pb-[env(safe-area-inset-bottom)]">
       <span className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 text-lg font-bold">
         <span>{label}</span>
         <span className="text-xl font-black">{formatPrice(subtotal)}</span>
@@ -314,7 +314,7 @@ function BottomNav({ onSearch }: { onSearch?: () => void }) {
   return (
     <nav aria-label="Acceso rápido" className="fixed inset-x-0 bottom-0 z-20 bg-st-primary pb-[env(safe-area-inset-bottom)] text-st-primary-fg md:hidden">
       <div className="mx-auto flex h-16 max-w-md items-stretch">
-        <Link href="/carrito" className={item}>
+        <Link href="/app/carrito" className={item}>
           <span className="relative">
             <ShoppingCart className="h-7 w-7" strokeWidth={2.4} aria-hidden />
             {count > 0 && (

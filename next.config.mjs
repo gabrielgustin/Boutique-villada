@@ -8,6 +8,14 @@ const nextConfig = {
   },
   // Paquetes con binarios o WASM: se cargan desde node_modules, sin empaquetar.
   serverExternalPackages: ["@electric-sql/pglite", "pg"],
+  // La tienda vive en /app (la portada del dominio es la landing). Las direcciones anteriores
+  // (productos compartidos, seguimiento de pedidos ya enviados por WhatsApp) siguen funcionando.
+  async redirects() {
+    return ["productos", "pedido", "carrito", "finalizar-pedido", "contacto"].flatMap((segment) => [
+      { source: `/${segment}`, destination: `/app/${segment}`, permanent: true },
+      { source: `/${segment}/:path*`, destination: `/app/${segment}/:path*`, permanent: true },
+    ])
+  },
   async headers() {
     return [
       {

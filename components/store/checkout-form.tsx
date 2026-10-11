@@ -104,7 +104,7 @@ export function CheckoutForm({ options, canOrder }: { options: Options; canOrder
       }
       localStorage.setItem(CONTACT_KEY, JSON.stringify({ name, phone, address }))
       setSent(true)
-      router.push(`/pedido/${data.token}?nuevo=1`)
+      router.push(`/app/pedido/${data.token}?nuevo=1`)
       clear()
     } catch {
       setError("No hay conexión. Revisá tu internet y probá de nuevo.")
@@ -134,7 +134,7 @@ export function CheckoutForm({ options, canOrder }: { options: Options; canOrder
       <div className="space-y-6">
         {!canOrder && (
           <p role="alert" className="rounded-st border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            El local está cerrado y en este momento no toma pedidos. <Link href="/contacto" className="font-semibold underline">Ver horarios</Link>
+            El local está cerrado y en este momento no toma pedidos. <Link href="/app/contacto" className="font-semibold underline">Ver horarios</Link>
           </p>
         )}
 

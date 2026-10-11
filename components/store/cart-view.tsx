@@ -35,7 +35,7 @@ function CartLine({ item }: { item: CartItem }) {
   return (
     <li className="py-3">
       <div className="flex items-center gap-3">
-        <Link href={`/productos/${item.categoryId}/${item.productId}`} className="relative h-14 w-12 shrink-0 overflow-hidden rounded-lg border border-st-border bg-white st-focus">
+        <Link href={`/app/productos/${item.categoryId}/${item.productId}`} className="relative h-14 w-12 shrink-0 overflow-hidden rounded-lg border border-st-border bg-white st-focus">
           <StoreImage src={item.imageUrl} alt="" fill sizes="48px" className="object-cover" />
         </Link>
         <div className="min-w-0 flex-1">
@@ -71,7 +71,7 @@ export function EmptyCart() {
       </span>
       <p className="text-xl font-bold text-st-heading">Tu pedido está vacío</p>
       <p className="mt-1 text-sm text-st-muted">Sumá productos para armar tu pedido.</p>
-      <Link href="/" className="st-btn mt-6 st-focus">
+      <Link href="/app" className="st-btn mt-6 st-focus">
         Ver productos
       </Link>
     </div>
@@ -142,7 +142,7 @@ export function CartView() {
               <span className="block text-2xl font-black text-st-price">{formatPrice(subtotal)}</span>
             </span>
           </div>
-          <Link href="/finalizar-pedido" className="st-btn w-full py-3.5 text-lg st-focus">
+          <Link href="/app/finalizar-pedido" className="st-btn w-full py-3.5 text-lg st-focus">
             Confirmar pedido
           </Link>
         </div>

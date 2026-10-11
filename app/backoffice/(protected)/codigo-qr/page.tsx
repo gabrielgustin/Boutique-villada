@@ -10,7 +10,7 @@ export default async function CodigoQRPage() {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000"
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https")
   // El QR apunta a la dirección oficial de la tienda; si no está configurada, a la que se está usando ahora.
-  const url = (process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`).replace(/\/$/, "")
+  const url = (process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`).replace(/\/$/, "") + "/app"
   const logoUrl = theme.logoUrl ?? store.logoUrl ?? DEFAULT_LOGO_URL
 
   return (

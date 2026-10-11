@@ -2,7 +2,8 @@
 
 Tienda online (catálogo + carrito + pedidos) con panel de administración, hecha con Next.js 16, React 19 y Tailwind 4.
 
-- **Tienda:** `/`: categorías, productos con talles, carrito, checkout, seguimiento del pedido (`/pedido/<enlace>`), instalable como app (PWA).
+- **Portada (landing):** `/`: accesos a turnos (sistema externo), lista de precios, catálogo, tienda online, Instagram y WhatsApp.
+- **Tienda:** `/app`: categorías, productos con talles, carrito, checkout, seguimiento del pedido (`/pedido/<enlace>`), instalable como app (PWA).
 - **Backoffice:** `/backoffice`: pedidos, productos, categorías, cupones, horarios, formas de entrega y pago, QR y **Personaliza tu App** (colores, tipografías, formas, logo y textos con vista previa en vivo).
 
 ## Cómo correrlo
@@ -27,7 +28,8 @@ No hay que tocar código: `lib/sql.ts` elige PGlite o Postgres según exista `DA
 
 | Carpeta | Qué hay |
 |---|---|
-| `app/(tienda)` | Pantallas públicas |
+| `app/page.tsx` | Landing de la portada |
+| `app/app/(tienda)` | Tienda pública (rutas bajo `/app`) | |
 | `app/backoffice` | Panel de administración (protegido por sesión) |
 | `app/api` | `/api/orders`, `/api/coupons/validate`, `/api/search` (públicas) y `/api/backoffice/*` (solo con sesión) |
 | `lib/sql.ts` | Única puerta a la base de datos (+ migraciones y datos demo en local) |

@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Mi pedido", robots: { index: false }
 export default function CartPage() {
   return (
     <>
-      <TitleBar title="Mi pedido" backHref="/" />
+      <TitleBar title="Mi pedido" backHref="/app" />
       <PageBody narrow>
         <CartView />
       </PageBody>

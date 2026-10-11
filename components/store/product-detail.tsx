@@ -79,7 +79,7 @@ export function ProductDetail({ product, category, canOrder }: { product: Detail
       note: note.trim() || undefined,
     })
     toast.success("Agregado al pedido", { description: `${quantity} × ${product.title}${variant ? ` (${variant.name})` : ""}` })
-    router.push(category.id === NO_CATEGORY ? "/" : `/productos/${category.id}`)
+    router.push(category.id === NO_CATEGORY ? "/app" : `/app/productos/${category.id}`)
   }
 
   return (

@@ -21,7 +21,7 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound()
 
   const category = await getCategoryById(product.category_id)
-  const backHref = category ? `/productos/${category.id}` : "/"
+  const backHref = category ? `/app/productos/${category.id}` : "/app"
 
   // Datos estructurados: ayudan a Google a mostrar precio y disponibilidad.
   const jsonLd = {

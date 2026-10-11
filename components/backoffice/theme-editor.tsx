@@ -268,7 +268,7 @@ function LivePreview({ theme }: { theme: ThemeSettings }) {
 
           <div className="absolute rounded-[54px] bg-black" style={{ inset: 5 }} />
           <div className="absolute overflow-hidden rounded-[50px] bg-white" style={{ inset: BEZEL, width: SCREEN_W, height: SCREEN_H }}>
-            <iframe ref={frame} src="/" title="Vista previa de la tienda" onLoad={send} className="block border-0 bg-white" style={{ width: SCREEN_W, height: SCREEN_H }} />
+            <iframe ref={frame} src="/app" title="Vista previa de la tienda" onLoad={send} className="block border-0 bg-white" style={{ width: SCREEN_W, height: SCREEN_H }} />
           </div>
 
           <span aria-hidden className="pointer-events-none absolute left-1/2 h-[34px] w-[120px] -translate-x-1/2 rounded-full bg-black" style={{ top: BEZEL + 11 }} />

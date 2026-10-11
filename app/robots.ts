@@ -4,7 +4,7 @@ const base = () => process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_PROJE
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/backoffice", "/api/", "/carrito", "/finalizar-pedido", "/pedido/"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/backoffice", "/api/", "/app/carrito", "/app/finalizar-pedido", "/app/pedido/"] }],
     ...(base() && { sitemap: `${base()}/sitemap.xml` }),
   }
 }
