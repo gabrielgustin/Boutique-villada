@@ -104,7 +104,6 @@ export default async function LandingPage() {
             rel="noopener noreferrer"
             className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#231c6b]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
           >
-            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#231c6b]" />
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#231c6b] text-white">
               <CalendarCheck className="h-6 w-6" aria-hidden />
             </span>
@@ -121,7 +120,6 @@ export default async function LandingPage() {
             href="/app"
             className={`group relative flex items-center gap-4 overflow-hidden rounded-3xl bg-white p-5 sm:flex-col sm:items-stretch sm:justify-between sm:gap-8 sm:p-6 shadow-xl shadow-[#d8392b]/10 ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-2xl ${focus}`}
           >
-            <span aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#d8392b]" />
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#d8392b] text-white">
               <ShoppingBag className="h-6 w-6" aria-hidden />
             </span>
