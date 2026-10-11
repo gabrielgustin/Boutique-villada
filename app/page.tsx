@@ -112,7 +112,7 @@ export default async function LandingPage() {
                 Turnos Boutique
                 <ArrowUpRight className="h-5 w-5 shrink-0 text-[#231c6b] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </span>
-              <span className="mt-1 block text-neutral-600">Reservá tu horario de atención · 60 minutos · Presencial</span>
+              <span className="mt-1 block text-neutral-600">Reservá tu horario de atención · 60 minutos</span>
             </span>
           </a>
 
