@@ -7,8 +7,9 @@ import { Download, Printer } from "lucide-react"
 // Lámina A4 a 150 ppp: es la misma imagen para la vista previa, la descarga y la impresión.
 const WIDTH = 1240
 const HEIGHT = 1754
-const BLUE = "#1e4b8e"
-const DARK = "#102547"
+const INDIGO = "#231c6b" // color de la presentación del sitio
+const DARK = "#14163a" // QR y textos oscuros
+const RED = "#d8392b" // acento de la presentación
 const FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -40,7 +41,7 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, 
   }
 }
 
-async function drawPoster(qrSvg: SVGSVGElement, { logoUrl, storeName, url }: { logoUrl: string | null; storeName: string; url: string }) {
+async function drawPoster(qrSvg: SVGSVGElement, { logoUrl, storeName }: { logoUrl: string | null; storeName: string }) {
   const canvas = document.createElement("canvas")
   canvas.width = WIDTH
   canvas.height = HEIGHT
@@ -53,88 +54,111 @@ async function drawPoster(qrSvg: SVGSVGElement, { logoUrl, storeName, url }: { l
     logoUrl ? loadImage(logoUrl, true) : Promise.resolve(null),
   ])
 
-  ctx.fillStyle = "#ffffff"
+  // Fondo.
+  ctx.fillStyle = "#f6f7fb"
   ctx.fillRect(0, 0, WIDTH, HEIGHT)
 
-  // Franja superior con círculos suaves, como las tarjetas de la tienda.
+  // Cabecera índigo con el borde inferior curvo, como la presentación del sitio.
+  const headerEdge = 590
   ctx.save()
   ctx.beginPath()
-  ctx.rect(0, 0, WIDTH, 560)
+  ctx.moveTo(0, 0)
+  ctx.lineTo(WIDTH, 0)
+  ctx.lineTo(WIDTH, headerEdge)
+  ctx.quadraticCurveTo(WIDTH / 2, headerEdge + 120, 0, headerEdge)
+  ctx.closePath()
   ctx.clip()
-  ctx.fillStyle = BLUE
-  ctx.fillRect(0, 0, WIDTH, 560)
-  ctx.fillStyle = "rgba(255,255,255,0.08)"
-  for (const [x, y, r] of [[1080, 90, 330], [120, 520, 260], [640, -60, 190]]) {
+  ctx.fillStyle = INDIGO
+  ctx.fillRect(0, 0, WIDTH, HEIGHT)
+  ctx.fillStyle = "rgba(255,255,255,0.05)"
+  for (const [x, y, r] of [[1120, 110, 340], [90, 470, 270], [660, -90, 200]]) {
     ctx.beginPath()
     ctx.arc(x, y, r, 0, Math.PI * 2)
     ctx.fill()
   }
   ctx.restore()
 
-  // Logo (o el nombre de la tienda) sobre una tarjeta blanca.
-  const cardW = 700
-  const cardH = 320
-  const cardX = (WIDTH - cardW) / 2
-  const cardY = 130
+  // Logo dentro de un círculo blanco con aro translúcido.
+  const cx = WIDTH / 2
+  const cy = 275
+  const radius = 190
+  ctx.fillStyle = "rgba(255,255,255,0.32)"
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius + 22, 0, Math.PI * 2)
+  ctx.fill()
   ctx.save()
-  ctx.shadowColor = "rgba(0,0,0,0.25)"
-  ctx.shadowBlur = 40
-  ctx.shadowOffsetY = 14
+  ctx.shadowColor = "rgba(0,0,0,0.3)"
+  ctx.shadowBlur = 50
+  ctx.shadowOffsetY = 18
   ctx.fillStyle = "#ffffff"
-  roundedRect(ctx, cardX, cardY, cardW, cardH, 48)
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2)
   ctx.fill()
   ctx.restore()
   if (logo) {
-    const scale = Math.min((cardW - 100) / logo.width, (cardH - 70) / logo.height)
+    const box = radius * 2 * 0.74
+    const scale = Math.min(box / logo.width, box / logo.height)
     const w = logo.width * scale
     const h = logo.height * scale
-    ctx.drawImage(logo, (WIDTH - w) / 2, cardY + (cardH - h) / 2, w, h)
+    ctx.drawImage(logo, cx - w / 2, cy - h / 2, w, h)
   } else {
-    ctx.fillStyle = BLUE
-    fitText(ctx, storeName, cardW - 100, 96, "800")
-    ctx.fillText(storeName, WIDTH / 2, cardY + cardH / 2 + 30)
+    ctx.fillStyle = INDIGO
+    fitText(ctx, storeName, radius * 2 * 0.8, 64, "800")
+    ctx.fillText(storeName, cx, cy + 22)
   }
 
   // Título.
-  ctx.fillStyle = BLUE
+  ctx.fillStyle = INDIGO
   fitText(ctx, "¡Escaneá y hacé tu pedido!", WIDTH - 160, 92, "800")
-  ctx.fillText("¡Escaneá y hacé tu pedido!", WIDTH / 2, 700)
+  ctx.fillText("¡Escaneá y hacé tu pedido!", cx, 800)
   ctx.fillStyle = "#6b7280"
   ctx.font = `400 42px ${FONT}`
-  ctx.fillText("Apuntá la cámara de tu celular al código", WIDTH / 2, 775)
+  ctx.fillText("Apuntá la cámara de tu celular al código", cx, 872)
 
-  // Código QR dentro de un marco.
-  const frame = 700
-  const frameX = (WIDTH - frame) / 2
-  const frameY = 850
+  // Código QR en una tarjeta blanca con esquinas de enfoque.
+  const frame = 640
+  const fx = (WIDTH - frame) / 2
+  const fy = 958
   ctx.save()
-  ctx.shadowColor = "rgba(16,37,71,0.18)"
-  ctx.shadowBlur = 36
-  ctx.shadowOffsetY = 12
+  ctx.shadowColor = "rgba(35,28,107,0.22)"
+  ctx.shadowBlur = 48
+  ctx.shadowOffsetY = 16
   ctx.fillStyle = "#ffffff"
-  roundedRect(ctx, frameX, frameY, frame, frame, 44)
+  roundedRect(ctx, fx, fy, frame, frame, 48)
   ctx.fill()
   ctx.restore()
-  ctx.lineWidth = 14
-  ctx.strokeStyle = BLUE
-  roundedRect(ctx, frameX + 7, frameY + 7, frame - 14, frame - 14, 40)
-  ctx.stroke()
   if (qr) {
-    const size = frame - 120
-    ctx.drawImage(qr, frameX + 60, frameY + 60, size, size)
+    const size = frame - 110
+    ctx.drawImage(qr, fx + 55, fy + 55, size, size)
   }
 
-  // Dirección de la tienda.
-  ctx.fillStyle = DARK
-  fitText(ctx, url.replace(/^https?:\/\//, "").replace(/\/$/, ""), WIDTH - 200, 46, "700")
-  ctx.fillText(url.replace(/^https?:\/\//, "").replace(/\/$/, ""), WIDTH / 2, 1650)
+  const gap = 34
+  const arm = 78
+  ctx.strokeStyle = RED
+  ctx.lineWidth = 14
+  ctx.lineCap = "round"
+  ctx.lineJoin = "round"
+  const l = fx - gap
+  const r = fx + frame + gap
+  const t = fy - gap
+  const bt = fy + frame + gap
+  for (const [x, y, dx, dy] of [[l, t, 1, 1], [r, t, -1, 1], [l, bt, 1, -1], [r, bt, -1, -1]]) {
+    ctx.beginPath()
+    ctx.moveTo(x + dx * arm, y)
+    ctx.lineTo(x, y)
+    ctx.lineTo(x, y + dy * arm)
+    ctx.stroke()
+  }
 
-  // Franja inferior.
-  ctx.fillStyle = BLUE
-  ctx.fillRect(0, HEIGHT - 70, WIDTH, 70)
-  ctx.fillStyle = "#ffffff"
-  fitText(ctx, storeName, WIDTH - 200, 34, "700")
-  ctx.fillText(storeName, WIDTH / 2, HEIGHT - 26)
+  // Cierre inferior curvo, sin texto.
+  ctx.fillStyle = INDIGO
+  ctx.beginPath()
+  ctx.moveTo(0, HEIGHT)
+  ctx.lineTo(0, HEIGHT - 52)
+  ctx.quadraticCurveTo(WIDTH / 2, HEIGHT - 120, WIDTH, HEIGHT - 52)
+  ctx.lineTo(WIDTH, HEIGHT)
+  ctx.closePath()
+  ctx.fill()
 
   return canvas.toDataURL("image/png")
 }
@@ -147,7 +171,7 @@ export function QrPanel({ url, logoUrl, storeName }: { url: string; logoUrl: str
     const svg = holder.current?.querySelector("svg")
     if (!svg) return
     let cancelled = false
-    drawPoster(svg, { logoUrl, storeName, url }).then((image) => !cancelled && setPoster(image))
+    drawPoster(svg, { logoUrl, storeName }).then((image) => !cancelled && setPoster(image))
     return () => {
       cancelled = true
     }
