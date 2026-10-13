@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 // Sistema de turnos de otro proveedor: se enlaza tal cual, sin tocarlo.
-const BOOKING_URL = "https://turnostiin.vercel.app/boutiqueitsvillada"
+const BOOKING_URL = "https://turnostiin.vercel.app/boutiqueitsvillada?turno"
 const INSTAGRAM_URL = "https://www.instagram.com/boutiqueits"
 
 // Ubicación: la boutique funciona en el Instituto Técnico Salesiano Villada (Córdoba).
