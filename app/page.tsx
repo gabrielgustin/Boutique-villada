@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight, CalendarCheck, Instagram, ShoppingBag } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
+import { PaymentDialog } from "@/components/landing/payment-dialog"
 import { WhatsAppFloatingButton } from "@/components/landing/whatsapp-button"
 import { getStoreInfo } from "@/lib/db"
 
@@ -135,6 +136,10 @@ export default async function LandingPage() {
 
         {/* Datos y redes */}
         <section aria-label="Información" className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <PaymentDialog />
+          </div>
+
           <HoursDialog days={days} open={status.open} statusLabel={status.label} address={ADDRESS} mapUrl={MAP_URL} bookingUrl={BOOKING_URL} />
 
           <a
