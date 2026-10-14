@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowUpRight, CalendarCheck, Instagram, ShoppingBag } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
 import { PaymentDialog } from "@/components/landing/payment-dialog"
+import { PriceListDialog } from "@/components/landing/price-list-dialog"
 import { WhatsAppFloatingButton } from "@/components/landing/whatsapp-button"
 import { getWhatsAppUrl } from "@/components/landing/whatsapp-url"
 
@@ -55,9 +56,20 @@ function getStatus(now: Date) {
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
+// Lista de precios vigente (PDF "LISTAS DE PRECIOS_DESDE 14.10.2026"): válida hasta el 31.10.2026 inclusive.
+const PRICES_VALIDITY = "14.10.2026 al 31.10.2026"
+const PRICES_VALID_UNTIL = "2026-10-31"
+
+function isPriceListExpired(now: Date) {
+  // "en-CA" da AAAA-MM-DD, que se compara como texto sin problemas de zona horaria.
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE }).format(now)
+  return today > PRICES_VALID_UNTIL
+}
+
 export default async function LandingPage() {
   const status = getStatus(new Date())
   const whatsappUrl = await getWhatsAppUrl()
+  const pricesExpired = isPriceListExpired(new Date())
   const days: HoursDay[] = WEEK.map(({ key, label }) => ({
     label,
     hours: WORKDAYS.includes(key) ? `${OPEN_HOUR}:00 a ${CLOSE_HOUR}:00 hs` : null,
@@ -127,6 +139,15 @@ export default async function LandingPage() {
 
         {/* Datos y redes */}
         <section aria-label="Información" className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <PriceListDialog
+              validity={PRICES_VALIDITY}
+              summary={pricesExpired ? "Consultá los precios vigentes" : "Vigente hasta el 31.10.2026"}
+              expired={pricesExpired}
+              whatsappUrl={whatsappUrl}
+            />
+          </div>
+
           <div className="sm:col-span-2">
             <PaymentDialog />
           </div>
