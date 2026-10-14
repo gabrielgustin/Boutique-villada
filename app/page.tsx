@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, BookOpen, CalendarCheck, ChevronRight, Instagram, ShoppingBag } from "lucide-react"
+import { ArrowUpRight, CalendarCheck, Instagram, ShoppingBag } from "lucide-react"
 import { HoursDialog, type HoursDay } from "@/components/landing/hours-dialog"
 import { PaymentDialog } from "@/components/landing/payment-dialog"
 import { WhatsAppFloatingButton } from "@/components/landing/whatsapp-button"
@@ -127,20 +127,6 @@ export default async function LandingPage() {
 
         {/* Datos y redes */}
         <section aria-label="Información" className="mt-8 grid gap-3 sm:grid-cols-2">
-          <Link
-            href="/catalogo"
-            className={`group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md sm:col-span-2 ${focus}`}
-          >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#231c6b]/10 text-[#231c6b]">
-              <BookOpen className="h-5 w-5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block font-semibold">Catálogo digital</span>
-              <span className="block text-sm text-neutral-600">Uniformes, camperas, herramientas y kit inicial</span>
-            </span>
-            <ChevronRight className="h-5 w-5 shrink-0 text-neutral-400 transition group-hover:translate-x-0.5 group-hover:text-neutral-700" aria-hidden />
-          </Link>
-
           <div className="sm:col-span-2">
             <PaymentDialog />
           </div>
