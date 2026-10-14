@@ -10,31 +10,44 @@ export const metadata: Metadata = {
   description: "Uniformes de aula, gimnasia y taller, buzos y camperas, y kit inicial de la Boutique ITS Villada.",
 }
 
-// Contenido del catálogo impreso (Catalogo.pdf) de la boutique, tal cual figura en el folleto.
+// Contenido del folleto impreso (Catalogo.pdf), con la misma estructura de paneles y colores.
+const BLUE = "#2f4fa0"
+const ORANGE = "#e8893f"
+const GREEN = "#5a8a78"
+const RED = "#d8392b"
+
 const WHATSAPP_LABEL = "(0351) 153 862108"
 const WHATSAPP_LINK = "https://wa.me/5493513862108"
 const INSTAGRAM_URL = "https://www.instagram.com/boutiqueits"
 const EMAIL = "boutiqueitsvillada@gmail.com"
 
-type Line = { name: string; detail?: string; sizes?: string }
-type Product = { image: string; alt: string; lines: Line[]; tag?: string }
-type Section = { id: string; title: string; short: string; color: string; products: Product[] }
+type Photo = { file: string; w: number; h: number; alt: string }
+type Item = {
+  photo: Photo
+  /** Texto del folleto: lo que va en negro y, aparte, lo que va en rojo (talles, nombre bordado). */
+  name: string
+  red?: string
+  sizes?: string
+  personalized?: boolean
+  note?: string
+  /** Segundo producto que aparece en la misma foto (por ejemplo, el pantalón). */
+  also?: { name: string; sizes?: string }
+}
+type Panel = { id: string; title: string; short: string; color: string; items: Item[] }
 
-const SECTIONS: Section[] = [
+const PANELS: Panel[] = [
   {
     id: "aula",
     title: "Uniforme de aula",
     short: "Aula",
-    color: "#2f4fa0",
-    products: [
+    color: BLUE,
+    items: [
       {
-        image: "aula-uniforme",
-        alt: "Chomba de piqué blanca con logo bordado y pantalón jogging azul",
-        tag: "Personalizado",
-        lines: [
-          { name: "Chomba de piqué", detail: "Con logo bordado", sizes: "T16 al XXL" },
-          { name: "Pantalón jogging largo", detail: "Frisa invisible peinada de abrigo y en rústico sin frisa para media estación", sizes: "T16 al XXL" },
-        ],
+        photo: { file: "aula-uniforme", w: 900, h: 1714, alt: "Chomba de piqué blanca con logo bordado y pantalón jogging azul" },
+        name: "Chomba de piqué con logo bordado",
+        sizes: "T16 al XXL",
+        personalized: true,
+        also: { name: "Pantalón jogging largo, frisa invisible peinada de abrigo y en rústico sin frisa para media estación", sizes: "T16 al XXL" },
       },
     ],
   },
@@ -42,27 +55,25 @@ const SECTIONS: Section[] = [
     id: "gimnasia",
     title: "Uniforme de gimnasia",
     short: "Gimnasia",
-    color: "#e8893f",
-    products: [
+    color: ORANGE,
+    items: [
       {
-        image: "gim-remera-pantalon",
-        alt: "Remera de gimnasia blanca con logo estampado y pantalón largo azul",
-        tag: "Personalizado",
-        lines: [
-          { name: "Remera de gimnasia", detail: "Con logo estampado", sizes: "T16 al XXL" },
-          { name: "Pantalón largo para gimnasia", detail: "Con logo estampado y nombre bordado", sizes: "T16 al XXL" },
-        ],
+        photo: { file: "gim-remera-pantalon", w: 581, h: 993, alt: "Remera de gimnasia blanca con logo estampado y pantalón largo azul" },
+        name: "Remera de gimnasia con logo estampado",
+        sizes: "T16 al XXL",
+        also: { name: "Pantalón largo para gimnasia con logo estampado y nombre bordado", sizes: "T16 al XXL" },
+        personalized: true,
       },
       {
-        image: "gim-bermuda",
-        alt: "Bermuda de gimnasia azul con remera blanca",
-        tag: "Personalizado",
-        lines: [{ name: "Bermuda de gimnasia", detail: "Con bolsillos, logo estampado y nombre bordado", sizes: "T14 al XXL" }],
+        photo: { file: "gim-gorra", w: 348, h: 251, alt: "Gorra de gabardina blanca y azul con logo ITS Villada" },
+        name: "Gorra gabardina de gimnasia con logo estampado",
+        note: "Otros modelos disponibles con bordados",
       },
       {
-        image: "gim-gorra",
-        alt: "Gorra de gabardina blanca y azul con logo ITS Villada",
-        lines: [{ name: "Gorra gabardina de gimnasia", detail: "Con logo estampado. Otros modelos disponibles con bordados" }],
+        photo: { file: "gim-bermuda", w: 613, h: 1020, alt: "Bermuda de gimnasia azul con remera blanca" },
+        name: "Bermuda de gimnasia con bolsillos, logo estampado y nombre bordado",
+        sizes: "T14 al XXL",
+        personalized: true,
       },
     ],
   },
@@ -70,19 +81,19 @@ const SECTIONS: Section[] = [
     id: "taller",
     title: "Uniforme de taller",
     short: "Taller",
-    color: "#5a8a78",
-    products: [
+    color: GREEN,
+    items: [
       {
-        image: "taller-guardapolvo",
-        alt: "Guardapolvo azul para taller con logo",
-        tag: "Personalizado",
-        lines: [{ name: "Guardapolvo para taller", detail: "Con logo estampado y nombre del alumno bordado", sizes: "T14 al XXL" }],
+        photo: { file: "taller-guardapolvo", w: 889, h: 1314, alt: "Guardapolvo azul para taller con logo" },
+        name: "Guardapolvo para taller con logo estampado y",
+        red: "nombre del alumno bordado",
+        sizes: "T14 al XXL",
+        personalized: true,
       },
       {
-        image: "taller-estuche",
-        alt: "Estuche porta herramientas con herramientas de taller",
-        tag: "Personalizado",
-        lines: [{ name: "Estuche porta herramientas y herramientas de taller" }],
+        photo: { file: "taller-estuche", w: 663, h: 679, alt: "Estuche porta herramientas con herramientas de taller" },
+        name: "Estuche porta herramientas y herramientas de taller",
+        personalized: true,
       },
     ],
   },
@@ -90,25 +101,25 @@ const SECTIONS: Section[] = [
     id: "buzos-camperas",
     title: "Buzo y camperas",
     short: "Buzo y camperas",
-    color: "#2f4fa0",
-    products: [
+    color: BLUE,
+    items: [
       {
-        image: "buzo",
-        alt: "Buzo azul con logo estampado y la inscripción Villada",
-        tag: "Personalizado",
-        lines: [{ name: "Buzo frisa invisible pesada peinada", detail: "Con logos estampados", sizes: "T14 al XXL" }],
+        photo: { file: "buzo", w: 900, h: 776, alt: "Buzo azul con logo estampado y la inscripción Villada" },
+        name: "Buzo frisa invisible pesada peinada con logos estampados",
+        sizes: "T14 al XXL",
+        personalized: true,
       },
       {
-        image: "campera-polar",
-        alt: "Campera polar azul con cuello rojo y logo bordado",
-        tag: "Personalizada",
-        lines: [{ name: "Campera polar antipiling combinada", detail: "Bolsillos con cierres y logo bordado", sizes: "T14 al XXL" }],
+        photo: { file: "campera-polar", w: 806, h: 638, alt: "Campera polar azul con cuello rojo y logo bordado" },
+        name: "Campera polar antipiling combinada, bolsillos con cierres y logo bordado",
+        sizes: "T14 al XXL",
+        personalized: true,
       },
       {
-        image: "campera-escolar",
-        alt: "Campera escolar azul con cuello rojo y puños con vivos",
-        tag: "Personalizada",
-        lines: [{ name: "Campera escolar combinada, frisa deportiva", detail: "Bolsillos con cierres y logo bordado", sizes: "T14 al XXL" }],
+        photo: { file: "campera-escolar", w: 721, h: 637, alt: "Campera escolar azul con cuello rojo y puños con vivos" },
+        name: "Campera escolar combinada, frisa deportiva, bolsillos con cierres y logo bordado",
+        sizes: "T14 al XXL",
+        personalized: true,
       },
     ],
   },
@@ -118,48 +129,71 @@ const KIT = {
   id: "kit-inicial",
   title: "Kit inicial",
   short: "Kit inicial",
-  color: "#5a8a78",
-  images: [
-    { image: "kit-papeleria", alt: "Carpetas, hojas A4, portaminas, minas y cartuchera ITSV" },
-    { image: "kit-carpeta-escuadras", alt: "Portafolio, tablero y escuadras" },
-    { image: "kit-paletas", alt: "Paletas, estuche ITSV porta paleta y pelotitas" },
-  ],
+  color: GREEN,
+  photos: [
+    { file: "kit-papeleria", w: 1000, h: 769, alt: "Carpetas, hojas A4, portaminas, minas y cartuchera ITSV" },
+    { file: "kit-carpeta-escuadras", w: 1000, h: 658, alt: "Portafolio, tablero y escuadras" },
+    { file: "kit-paletas", w: 1000, h: 428, alt: "Paletas, estuche ITSV porta paleta y pelotitas" },
+  ] as Photo[],
   items: ["Cartuchera ITSV", "Paletas, estuche ITSV porta paleta y pelotitas", "Estuche porta herramientas y herramientas de taller"],
 }
 
-const NAV = [...SECTIONS.map(({ id, short }) => ({ id, short })), { id: KIT.id, short: KIT.short }]
+const NAV = [...PANELS.map(({ id, short }) => ({ id, short })), { id: KIT.id, short: KIT.short }, { id: "contacto", short: "Contacto" }]
 
-function ProductCard({ product, color }: { product: Product; color: string }) {
+/** Banner de color con el título en mayúsculas y el logo a la derecha, como en el folleto. */
+function Banner({ title, color, id }: { title: string; color: string; id: string }) {
   return (
-    <article className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-      <div className="relative aspect-[4/5] w-full bg-white">
-        <Image
-          src={`/catalogo/${product.image}.jpg`}
-          alt={product.alt}
-          fill
-          sizes="(min-width: 768px) 320px, (min-width: 640px) 45vw, 90vw"
-          className="object-contain p-3"
-        />
-        {product.tag && (
-          <span className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm" style={{ backgroundColor: color }}>
-            {product.tag}
-          </span>
-        )}
+    <div className="flex items-stretch" style={{ backgroundColor: color }}>
+      <h2 id={id} className="flex flex-1 items-center px-4 py-4 text-xl font-extrabold uppercase leading-tight tracking-wide text-white">
+        {title}
+      </h2>
+      <div className="flex shrink-0 items-center bg-white px-3">
+        <Image src="/logo-its-boutique.png" alt="ITS Boutique" width={640} height={477} className="h-auto w-16" />
       </div>
-      <ul className="space-y-3 border-t border-neutral-100 p-4">
-        {product.lines.map((line) => (
-          <li key={line.name}>
-            <p className="font-semibold leading-snug text-[#14163a]">{line.name}</p>
-            {line.detail && <p className="mt-0.5 text-sm text-neutral-600">{line.detail}</p>}
-            {line.sizes && (
-              <p className="mt-1.5">
-                <span className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-700">Talles {line.sizes}</span>
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
-    </article>
+      <div aria-hidden className="w-3 shrink-0" style={{ backgroundColor: color }} />
+    </div>
+  )
+}
+
+function ProductBlock({ item }: { item: Item }) {
+  return (
+    <div className="px-4">
+      <Image
+        src={`/catalogo/${item.photo.file}.jpg`}
+        alt={item.photo.alt}
+        width={item.photo.w}
+        height={item.photo.h}
+        sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 92vw"
+        className="mx-auto h-auto w-full max-w-[22rem]"
+      />
+      <p className="mt-3 text-[15px] font-semibold leading-snug text-neutral-800">
+        {item.name}
+        {item.red && <span style={{ color: RED }}> {item.red}</span>}
+        {item.sizes && <span style={{ color: RED }}> ({item.sizes})</span>}
+      </p>
+      {item.also && (
+        <p className="mt-3 text-[15px] font-semibold leading-snug text-neutral-800">
+          {item.also.name}
+          {item.also.sizes && <span style={{ color: RED }}> ({item.also.sizes})</span>}
+        </p>
+      )}
+      {item.note && <p className="mt-1.5 text-sm leading-snug text-neutral-600">{item.note}</p>}
+      {item.personalized && (
+        <p className="mt-1.5 text-xs font-bold uppercase tracking-wider" style={{ color: RED }}>
+          Personalizado
+        </p>
+      )}
+    </div>
+  )
+}
+
+function PanelShell({ id, color, title, children }: { id: string; color: string; title: string; children: React.ReactNode }) {
+  return (
+    <section id={id} aria-labelledby={`${id}-title`} className="flex scroll-mt-36 flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white">
+      <Banner id={`${id}-title`} title={title} color={color} />
+      <div className="flex-1 space-y-8 py-5">{children}</div>
+      <div aria-hidden className="h-5" style={{ backgroundColor: color }} />
+    </section>
   )
 }
 
@@ -167,9 +201,9 @@ export default async function CatalogoPage() {
   const whatsappUrl = await getWhatsAppUrl()
 
   return (
-    <main className="min-h-screen bg-[#f6f7fb] pb-28 text-[#14163a]">
+    <main className="min-h-screen bg-neutral-100 pb-28 text-neutral-900">
       <header className="sticky top-0 z-30 bg-[#231c6b] text-white shadow-md">
-        <div className="mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-3">
+        <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
           <Link
             href="/"
             aria-label="Volver al inicio"
@@ -179,10 +213,10 @@ export default async function CatalogoPage() {
           </Link>
           <div className="min-w-0">
             <h1 className="truncate text-lg font-bold leading-tight">Catálogo digital</h1>
-            <p className="truncate text-xs text-white/75">Boutique ITS Villada</p>
+            <p className="truncate text-xs text-white/75">Boutique Uniformes ITS Villada</p>
           </div>
         </div>
-        <nav aria-label="Secciones del catálogo" className="mx-auto w-full max-w-5xl">
+        <nav aria-label="Secciones del catálogo" className="mx-auto w-full max-w-6xl">
           <ul className="flex gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NAV.map(({ id, short }) => (
               <li key={id} className="shrink-0">
@@ -198,89 +232,76 @@ export default async function CatalogoPage() {
         </nav>
       </header>
 
-      <div className="mx-auto w-full max-w-5xl space-y-12 px-4 pt-8">
-        {SECTIONS.map((section) => (
-          <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`} className="scroll-mt-32">
-            <div className="flex items-center gap-3">
-              <span aria-hidden className="h-8 w-1.5 rounded-full" style={{ backgroundColor: section.color }} />
-              <h2 id={`${section.id}-title`} className="text-2xl font-bold">
-                {section.title}
-              </h2>
-            </div>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {section.products.map((product) => (
-                <ProductCard key={product.image} product={product} color={section.color} />
-              ))}
-            </div>
-          </section>
+      <div className="mx-auto grid w-full max-w-6xl items-start gap-5 px-4 pt-6 md:grid-cols-2 lg:grid-cols-3">
+        {PANELS.map((panel) => (
+          <PanelShell key={panel.id} id={panel.id} title={panel.title} color={panel.color}>
+            {panel.items.map((item) => (
+              <ProductBlock key={item.photo.file} item={item} />
+            ))}
+          </PanelShell>
         ))}
 
-        <section id={KIT.id} aria-labelledby={`${KIT.id}-title`} className="scroll-mt-32">
-          <div className="flex items-center gap-3">
-            <span aria-hidden className="h-8 w-1.5 rounded-full" style={{ backgroundColor: KIT.color }} />
-            <h2 id={`${KIT.id}-title`} className="text-2xl font-bold">
-              {KIT.title}
-            </h2>
-          </div>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {KIT.images.map(({ image, alt }) => (
-              <div key={image} className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-                <Image src={`/catalogo/${image}.jpg`} alt={alt} fill sizes="(min-width: 1024px) 320px, (min-width: 640px) 45vw, 90vw" className="object-contain p-3" />
-              </div>
+        <PanelShell id={KIT.id} title={KIT.title} color={KIT.color}>
+          <div className="space-y-4 px-4">
+            {KIT.photos.map((photo) => (
+              <Image
+                key={photo.file}
+                src={`/catalogo/${photo.file}.jpg`}
+                alt={photo.alt}
+                width={photo.w}
+                height={photo.h}
+                sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 92vw"
+                className="mx-auto h-auto w-full max-w-[22rem]"
+              />
             ))}
           </div>
-          <ul className="mt-4 grid gap-2 sm:grid-cols-3">
+          <ul className="space-y-1.5 px-4">
             {KIT.items.map((item) => (
-              <li key={item} className="rounded-2xl bg-white px-4 py-3 text-sm font-medium shadow-sm ring-1 ring-black/5">
+              <li key={item} className="text-[15px] font-semibold text-neutral-800 underline decoration-neutral-400 underline-offset-4">
                 {item}
               </li>
             ))}
           </ul>
-        </section>
+        </PanelShell>
 
-        <section aria-labelledby="local-title" className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-          <div className="grid gap-px bg-neutral-100 sm:grid-cols-2">
-            <div className="relative aspect-[10/9] bg-white">
-              <Image src="/catalogo/local-fachada.jpg" alt="Frente del Instituto Técnico Salesiano Villada, Boutique Uniformes ITS Villada" fill sizes="(min-width: 640px) 480px, 100vw" className="object-cover" />
-            </div>
-            <div className="relative aspect-[10/9] bg-white sm:aspect-auto">
-              <Image src="/catalogo/local-interior.jpg" alt="Herramientas para taller, uniforme completo, probador y stock todo el año" fill sizes="(min-width: 640px) 480px, 100vw" className="object-cover" />
-            </div>
-          </div>
-          <div className="space-y-5 p-6 text-center">
-            <h2 id="local-title" className="text-2xl font-bold text-[#231c6b]">
-              Abierto todo el año
-            </h2>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-neutral-500">Medios de contacto</p>
-              <div className="mt-3 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:flex-wrap">
-                <a
-                  href={WHATSAPP_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-3 font-semibold text-[#0b3d1f] transition hover:brightness-105"
-                >
-                  <MessageCircle className="h-5 w-5" aria-hidden />
-                  {WHATSAPP_LABEL} · WhatsApp
-                </a>
-                <a
-                  href={INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-neutral-100 px-5 py-3 font-semibold transition hover:bg-neutral-200"
-                >
-                  <Instagram className="h-5 w-5" aria-hidden />
-                  boutiqueits
-                </a>
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-neutral-100 px-5 py-3 font-semibold transition hover:bg-neutral-200"
-                >
-                  <Mail className="h-5 w-5" aria-hidden />
-                  {EMAIL}
-                </a>
-              </div>
-            </div>
+        {/* Último panel del folleto: el local y los medios de contacto */}
+        <section id="contacto" aria-labelledby="contacto-title" className="flex scroll-mt-36 flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white">
+          <Image
+            src="/catalogo/local-fachada.jpg"
+            alt="Frente del Instituto Técnico Salesiano Villada, Boutique Uniformes ITS Villada"
+            width={1000}
+            height={918}
+            sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
+            className="h-auto w-full"
+          />
+          <Image
+            src="/catalogo/local-interior.jpg"
+            alt="Herramientas para taller, uniforme completo, probador y stock todo el año"
+            width={1000}
+            height={531}
+            sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
+            className="h-auto w-full"
+          />
+          <h2 id="contacto-title" className="px-4 py-4 text-center text-2xl font-extrabold uppercase tracking-wide text-white" style={{ backgroundColor: BLUE }}>
+            Abierto todo el año
+          </h2>
+          <div className="space-y-4 px-4 py-6 text-center">
+            <p className="text-lg font-bold uppercase underline underline-offset-4">Medios de contacto</p>
+            <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="mx-auto flex w-fit items-center gap-3 text-xl font-semibold hover:underline">
+              <MessageCircle className="h-7 w-7 text-[#25D366]" aria-hidden />
+              <span>
+                {WHATSAPP_LABEL}
+                <span className="block text-base font-bold text-[#1f9d4d]">(WhatsApp)</span>
+              </span>
+            </a>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="mx-auto flex w-fit items-center gap-3 text-xl font-semibold hover:underline">
+              <Instagram className="h-7 w-7 text-[#d62976]" aria-hidden />
+              boutiqueits
+            </a>
+            <a href={`mailto:${EMAIL}`} className="mx-auto flex w-fit items-center gap-2 text-base font-semibold hover:underline">
+              <Mail className="h-5 w-5 text-neutral-500" aria-hidden />
+              {EMAIL}
+            </a>
           </div>
         </section>
       </div>
