@@ -18,8 +18,8 @@ const INSTALLMENT_GROUPS: { title: string; plans: { label: string; rate: string 
 ]
 
 const TRANSFERS = [
-  { title: "Transferencia uniformes (padres)", bank: "BNA+", alias: "ITS.VILLADA.BOUTIQUE", color: "#2b3490" },
-  { title: "Transferencia alumnos", bank: "Mercado Pago", alias: "ITS.VILLADA.mp", color: "#ff6a00" },
+  { who: "Uniformes (padres)", bank: "BNA+", alias: "ITS.VILLADA.BOUTIQUE", color: "#2b3490" },
+  { who: "Alumnos", bank: "Mercado Pago", alias: "ITS.VILLADA.mp", color: "#ff6a00" },
 ]
 
 function CopyAlias({ alias }: { alias: string }) {
@@ -92,28 +92,30 @@ export function PaymentDialog() {
               </div>
               <ul className="divide-y divide-neutral-100">
                 {SAME_PRICE.map((method) => (
-                  <li key={method} className="flex items-center gap-3 px-4 py-3 text-sm text-neutral-700">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                    {method}
+                  <li key={method} className="px-4 py-3 text-sm text-neutral-700">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                      {method}
+                    </div>
+                    {method === "Transferencia" && (
+                      <ul className="ml-7 mt-3 space-y-2">
+                        {TRANSFERS.map((transfer) => (
+                          <li key={transfer.who} className="flex items-center justify-between gap-3 rounded-xl bg-neutral-50 py-2 pl-3 pr-2" style={{ borderLeft: `4px solid ${transfer.color}` }}>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: transfer.color }}>
+                                {transfer.who} · {transfer.bank}
+                              </p>
+                              <p className="break-all text-[15px] font-bold text-[#14163a]">{transfer.alias}</p>
+                            </div>
+                            <CopyAlias alias={transfer.alias} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ul>
             </section>
-
-            {TRANSFERS.map((transfer) => (
-              <section key={transfer.title} className="rounded-2xl ring-1 ring-black/5">
-                <h3 className="border-b border-neutral-100 px-4 py-3 font-semibold" style={{ color: transfer.color }}>
-                  {transfer.title}
-                </h3>
-                <div className="flex items-center justify-between gap-3 px-4 py-3">
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Alias {transfer.bank}</p>
-                    <p className="break-all text-base font-bold text-[#14163a]">{transfer.alias}</p>
-                  </div>
-                  <CopyAlias alias={transfer.alias} />
-                </div>
-              </section>
-            ))}
 
             {INSTALLMENT_GROUPS.map((group) => (
               <section key={group.title} className="rounded-2xl ring-1 ring-black/5">
