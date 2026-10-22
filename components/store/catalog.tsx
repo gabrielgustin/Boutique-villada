@@ -59,7 +59,7 @@ export function CategoryGrid({ categories }: { categories: CatalogCategory[] }) 
   }
 
   return (
-    <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category, index) => (
         <li key={category.id}>
           <Link href={`/app/productos/${category.id}`} className="group relative flex h-36 flex-col items-center justify-center gap-2 overflow-hidden rounded-st bg-st-text/10 px-4 text-center shadow-[var(--st-shadow)] md:h-40 st-focus">
@@ -122,7 +122,7 @@ export function ProductGrid({ products, priority = false }: { products: CatalogP
   }
 
   return (
-    <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {products.map((product) => (
         <li key={product.id}>
           <ProductRow product={product} />
