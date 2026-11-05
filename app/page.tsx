@@ -56,9 +56,9 @@ function getStatus(now: Date) {
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#231c6b]"
 
-// Lista de precios vigente (PDF "LISTAS DE PRECIOS_DESDE 14.10.2026"): válida hasta el 31.10.2026 inclusive.
-const PRICES_VALIDITY = "14.10.2026 al 31.10.2026"
-const PRICES_VALID_UNTIL = "2026-10-31"
+// Lista de precios vigente (PDF "LISTAS DE PRECIOS_DESDE 14.10.2026"): válida hasta el 30.11.2026 inclusive.
+const PRICES_VALIDITY = "14 de octubre al 30 de noviembre de 2026"
+const PRICES_VALID_UNTIL = "2026-11-30"
 
 function isPriceListExpired(now: Date) {
   // "en-CA" da AAAA-MM-DD, que se compara como texto sin problemas de zona horaria.
@@ -142,7 +142,7 @@ export default async function LandingPage() {
           <div className="sm:col-span-2">
             <PriceListDialog
               validity={PRICES_VALIDITY}
-              summary={pricesExpired ? "Consultá los precios vigentes" : "Vigente hasta el 31.10.2026"}
+              summary={pricesExpired ? "Consultá los precios vigentes" : "Vigente hasta el 30 de noviembre"}
               expired={pricesExpired}
               whatsappUrl={whatsappUrl}
             />
