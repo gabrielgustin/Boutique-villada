@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       request,
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"],
+          allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
           addRandomSuffix: true,
           maximumSizeInBytes: 20 * 1024 * 1024,
         }

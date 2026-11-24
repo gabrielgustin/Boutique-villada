@@ -337,7 +337,7 @@ export function ImageField({
             ref={inputRef}
             id={inputId}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
+            accept="image/*"
             className="sr-only"
             onChange={(event) => {
               const file = event.target.files?.[0]

@@ -2,8 +2,12 @@ import { upload } from "@vercel/blob/client"
 import { removeSolidBackground, visibleBounds } from "@/lib/image-background"
 
 // Generous ceiling for the raw file selected by the user, before any
-// client-side resizing happens.
-const MAX_FILE_SIZE = 20 * 1024 * 1024
+// client-side resizing happens (fotos de 48 MP de celulares nuevos rondan los 20-30 MB).
+const MAX_FILE_SIZE = 50 * 1024 * 1024
+// Lo que acepta el almacenamiento si hay que subir el archivo original sin convertir.
+const MAX_ORIGINAL_SIZE = 20 * 1024 * 1024
+const DISPLAYABLE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+const EXTENSION: Record<string, string> = { "image/webp": "webp", "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif" }
 
 // Uniform canvas size every uploaded image is normalized into. Images are
 // never cropped: they are scaled to fit inside this square and centered.
@@ -15,6 +19,13 @@ const CANVAS_SIZE = 1200
 const WEBP_QUALITY = 0.82
 
 export class ImageUploadError extends Error {}
+
+// Algunos navegadores (Chrome en Windows o Android con fotos HEIC) dejan `file.type` vacío:
+// por eso también se mira la extensión del nombre.
+export const isImageFile = (file: { name: string; type: string }) =>
+  file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|avif|bmp|hei[cf])$/i.test(file.name)
+
+export const isHeic = (file: { name: string; type: string }) => /^image\/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)
 
 export interface UploadOptions {
   /** Quita un fondo liso (para logos). Si la imagen no lo tiene, se sube igual. */
@@ -96,19 +107,41 @@ async function resizeToWebp(file: File, options: UploadOptions = {}): Promise<Bl
       }
     }
 
-    const blob = await new Promise<Blob | null>((resolve) => {
-      output.toBlob((result) => resolve(result), "image/webp", WEBP_QUALITY)
-    })
+    const encode = (target: HTMLCanvasElement, type: string, quality?: number) =>
+      new Promise<Blob | null>((resolve) => target.toBlob(resolve, type, quality))
 
-    // Some browsers (older Safari) ignore the requested type and return null
-    // or fall back silently; treat anything that isn't a real webp blob as
-    // "couldn't optimize" so the caller can fall back to the original file.
-    if (!blob || blob.type !== "image/webp") return null
+    // Some browsers (Safari) ignore the requested type and return PNG or null:
+    // only a real webp blob counts.
+    const webp = await encode(output, "image/webp", WEBP_QUALITY)
+    if (webp?.type === "image/webp") return webp
 
-    return blob
+    // Sin WebP: PNG si la imagen tiene partes transparentes (logos), si no JPEG con fondo blanco
+    // (el JPEG no tiene transparencia y los márgenes saldrían negros).
+    const area = output === canvas ? { x: offsetX, y: offsetY, w: drawWidth, h: drawHeight } : { x: 0, y: 0, w: output.width, h: output.height }
+    const content = output.getContext("2d")?.getImageData(area.x, area.y, Math.max(1, Math.round(area.w)), Math.max(1, Math.round(area.h))).data
+    let transparent = false
+    for (let i = 3; content && i < content.length; i += 16) {
+      if (content[i] < 250) {
+        transparent = true
+        break
+      }
+    }
+    if (transparent) {
+      const png = await encode(output, "image/png")
+      return png?.type === "image/png" ? png : null
+    }
+    const flat = document.createElement("canvas")
+    flat.width = output.width
+    flat.height = output.height
+    const flatCtx = flat.getContext("2d")
+    if (!flatCtx) return null
+    flatCtx.fillStyle = "#ffffff"
+    flatCtx.fillRect(0, 0, flat.width, flat.height)
+    flatCtx.drawImage(output, 0, 0)
+    const jpeg = await encode(flat, "image/jpeg", 0.85)
+    return jpeg?.type === "image/jpeg" ? jpeg : null
   } catch {
-    // Covers formats the browser's <img> can't decode (e.g. HEIC in
-    // Chrome/Firefox) — fall back to uploading the original file untouched.
+    // Formatos que el navegador no sabe leer (por ejemplo HEIC en Chrome o Firefox).
     return null
   } finally {
     URL.revokeObjectURL(objectUrl)
@@ -126,21 +159,39 @@ async function resizeToWebp(file: File, options: UploadOptions = {}): Promise<Bl
  * is always better than a hard error for the user.
  */
 export async function uploadBackofficeImage(file: File, options: UploadOptions = {}): Promise<string> {
-  if (!file.type.startsWith("image/")) {
-    throw new ImageUploadError("Por favor selecciona un archivo de imagen válido")
+  if (!isImageFile(file)) {
+    throw new ImageUploadError("Elegí un archivo de imagen: JPG, PNG, WebP o una foto del celular.")
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    throw new ImageUploadError("La imagen no debe superar los 20MB")
+    throw new ImageUploadError("La imagen no debe superar los 50 MB")
   }
 
   const optimized = await resizeToWebp(file, options)
 
+  // Si el navegador no pudo convertirla, solo se sube el original si se puede ver en cualquier navegador.
+  if (!optimized) {
+    if (isHeic(file)) {
+      throw new ImageUploadError("Este navegador no puede leer fotos HEIC de iPhone. Subila desde el celular o guardala como JPG y volvé a intentar.")
+    }
+    if (!DISPLAYABLE_TYPES.includes(file.type)) {
+      throw new ImageUploadError("No se pudo leer la imagen. Probá con una foto JPG o PNG.")
+    }
+    if (file.size > MAX_ORIGINAL_SIZE) {
+      throw new ImageUploadError("No se pudo achicar la imagen y supera los 20 MB. Probá con una foto más liviana.")
+    }
+  }
+
   const uploadFile = optimized ?? file
-  const fileName = optimized ? `${toBaseFileName(file.name)}.webp` : file.name
+  const fileName = `${toBaseFileName(file.name)}.${EXTENSION[uploadFile.type] ?? "jpg"}`
 
   try {
-    const mode = (await fetch("/api/backoffice/upload").then((response) => response.json())) as { storage?: string }
+    const modeResponse = await fetch("/api/backoffice/upload")
+    // La sesión del panel dura 12 horas: con la pestaña abierta desde el día anterior, vence.
+    if (modeResponse.status === 401) {
+      throw new ImageUploadError("Tu sesión venció. Volvé a iniciar sesión en el panel y subí la imagen de nuevo.")
+    }
+    const mode = (await modeResponse.json()) as { storage?: string }
 
     // Desarrollo local: el archivo se guarda en el propio servidor.
     if (mode.storage !== "blob") {
@@ -155,7 +206,7 @@ export async function uploadBackofficeImage(file: File, options: UploadOptions =
     const blob = await upload(fileName, uploadFile, {
       access: "public",
       handleUploadUrl: "/api/backoffice/upload/client-token",
-      contentType: uploadFile.type || file.type,
+      contentType: uploadFile.type,
     })
 
     return blob.url
