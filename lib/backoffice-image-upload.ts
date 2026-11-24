@@ -52,15 +52,28 @@ function toBaseFileName(fileName: string) {
 async function resizeToWebp(file: File, options: UploadOptions = {}): Promise<Blob | null> {
   if (typeof document === "undefined") return null
 
-  const objectUrl = URL.createObjectURL(file)
-
-  try {
-    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+  const objectUrls: string[] = []
+  const load = (blob: Blob) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const url = URL.createObjectURL(blob)
+      objectUrls.push(url)
       const img = new Image()
       img.onload = () => resolve(img)
       img.onerror = () => reject(new Error("No se pudo leer la imagen"))
-      img.src = objectUrl
+      img.src = url
     })
+
+  try {
+    let image: HTMLImageElement
+    try {
+      image = await load(file)
+    } catch (error) {
+      // Chrome, Edge y Firefox no leen fotos HEIC de iPhone: se convierten primero a JPEG.
+      // El conversor pesa unos 3 MB, por eso se descarga solo cuando hace falta.
+      if (!isHeic(file)) throw error
+      const { heicTo } = await import("heic-to/next")
+      image = await load(await heicTo({ blob: file, type: "image/jpeg", quality: 0.92 }))
+    }
 
     const canvas = document.createElement("canvas")
     canvas.width = CANVAS_SIZE
@@ -144,7 +157,7 @@ async function resizeToWebp(file: File, options: UploadOptions = {}): Promise<Bl
     // Formatos que el navegador no sabe leer (por ejemplo HEIC en Chrome o Firefox).
     return null
   } finally {
-    URL.revokeObjectURL(objectUrl)
+    objectUrls.forEach((url) => URL.revokeObjectURL(url))
   }
 }
 
