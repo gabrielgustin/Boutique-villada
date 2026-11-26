@@ -7,6 +7,8 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024
 // Lo que acepta el almacenamiento si hay que subir el archivo original sin convertir.
 const MAX_ORIGINAL_SIZE = 20 * 1024 * 1024
 const DISPLAYABLE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+// Lo que acepta /api/backoffice/upload (Vercel corta los pedidos de más de 4,5 MB).
+const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024
 const EXTENSION: Record<string, string> = { "image/webp": "webp", "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif" }
 
 // Uniform canvas size every uploaded image is normalized into. Images are
@@ -198,23 +200,26 @@ export async function uploadBackofficeImage(file: File, options: UploadOptions =
   const uploadFile = optimized ?? file
   const fileName = `${toBaseFileName(file.name)}.${EXTENSION[uploadFile.type] ?? "jpg"}`
 
-  try {
-    const modeResponse = await fetch("/api/backoffice/upload")
-    // La sesión del panel dura 12 horas: con la pestaña abierta desde el día anterior, vence.
-    if (modeResponse.status === 401) {
-      throw new ImageUploadError("Tu sesión venció. Volvé a iniciar sesión en el panel y subí la imagen de nuevo.")
-    }
-    const mode = (await modeResponse.json()) as { storage?: string }
+  // La sesión del panel dura 12 horas: con la pestaña abierta desde el día anterior, vence.
+  const expired = () => new ImageUploadError("Tu sesión venció. Volvé a iniciar sesión en el panel y subí la imagen de nuevo.")
 
-    // Desarrollo local: el archivo se guarda en el propio servidor.
-    if (mode.storage !== "blob") {
+  try {
+    // Lo normal: la imagen ya achicada (menos de 4 MB) va por el propio sitio, que la guarda.
+    if (uploadFile.size <= SERVER_UPLOAD_LIMIT) {
       const body = new FormData()
       body.append("file", uploadFile, fileName)
       const response = await fetch("/api/backoffice/upload", { method: "POST", body })
+      if (response.status === 401) throw expired()
       const data = (await response.json().catch(() => ({}))) as { url?: string; error?: string }
-      if (!response.ok || !data.url) throw new ImageUploadError(data.error ?? "No se pudo subir la imagen")
+      if (!response.ok || !data.url) throw new ImageUploadError(data.error ?? `No se pudo subir la imagen (error ${response.status}). Intentá nuevamente.`)
       return data.url
     }
+
+    // Archivo grande (no se pudo achicar): sube directo al almacenamiento.
+    const modeResponse = await fetch("/api/backoffice/upload")
+    if (modeResponse.status === 401) throw expired()
+    const mode = (await modeResponse.json()) as { storage?: string }
+    if (mode.storage !== "blob") throw new ImageUploadError("La imagen supera los 4 MB. Probá con una foto más liviana.")
 
     const blob = await upload(fileName, uploadFile, {
       access: "public",
@@ -226,6 +231,8 @@ export async function uploadBackofficeImage(file: File, options: UploadOptions =
   } catch (error) {
     if (error instanceof ImageUploadError) throw error
     console.error("Error subiendo la imagen:", error)
-    throw new ImageUploadError("No se pudo subir la imagen. Intenta nuevamente.")
+    // Se muestra el motivo real para poder diagnosticar (por ejemplo, sin conexión).
+    const detail = error instanceof Error && error.message ? ` (${error.message})` : ""
+    throw new ImageUploadError(`No se pudo subir la imagen${detail}. Revisá la conexión e intentá nuevamente.`)
   }
 }
