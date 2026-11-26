@@ -5,8 +5,8 @@ import { redirect } from "next/navigation"
 import { requireBackofficeSession } from "@/lib/backoffice-auth"
 import { BackofficeSignInForm } from "@/components/backoffice/auth-form"
 
-export default async function BackofficeSignInPage() {
-  const session = await requireBackofficeSession()
+export default async function BackofficeSignInPage({ searchParams }: { searchParams: Promise<{ sesion?: string }> }) {
+  const [session, { sesion }] = await Promise.all([requireBackofficeSession(), searchParams])
 
   if (session?.user) {
     redirect("/backoffice")
@@ -29,6 +29,11 @@ export default async function BackofficeSignInPage() {
           </div>
           <p className="text-sm text-gray-500 mt-3">Iniciá sesión para administrar tu tienda</p>
         </div>
+        {sesion === "vencida" && (
+          <p role="status" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            Tu sesión venció. Volvé a ingresar y repetí lo que estabas haciendo.
+          </p>
+        )}
         <BackofficeSignInForm />
         <Link
           href="/app"

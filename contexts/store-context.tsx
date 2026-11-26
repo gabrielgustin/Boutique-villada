@@ -158,6 +158,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [horariosAtencion, setHorariosAtencion] = useState<HorariosAtencion>(initialHorariosAtencion)
   const [loading, setLoading] = useState(true)
 
+  // La sesión del panel vence a las 12 horas sin uso. Con la pestaña abierta desde antes (pasa mucho
+  // en el celular), la pantalla se sigue viendo pero cada acción falla: ante el primer "no autorizado"
+  // del servidor se lleva al ingreso con un aviso, en vez de mostrar errores sueltos.
+  useEffect(() => {
+    const original = window.fetch
+    window.fetch = async (input, init) => {
+      const response = await original(input, init)
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url
+      const api = new URL(url, window.location.href).pathname
+      const inAuthPage = /^\/backoffice\/(sign-in|setup)/.test(window.location.pathname)
+      if (response.status === 401 && api.startsWith("/api/backoffice/") && !inAuthPage) {
+        window.location.href = "/backoffice/sign-in?sesion=vencida"
+      }
+      return response
+    }
+    return () => {
+      window.fetch = original
+    }
+  }, [])
+
   const refetchCategorias = async () => {
     try {
       const response = await fetch("/api/backoffice/categorias")
