@@ -493,7 +493,8 @@ export default function CategoriasPage() {
                   <div className="space-y-1.5">
                     <Label className="text-sm font-medium text-gray-700">Imagen</Label>
                     <div className="flex items-center gap-4">
-                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border bg-gray-100">
+                      {/* Misma proporción que la tarjeta de la tienda: se ve qué parte de la foto queda. */}
+                      <div className="relative h-20 w-48 flex-shrink-0 overflow-hidden rounded-lg border bg-gray-100">
                         <Image
                           src={nuevaCategoria.imagen || "/placeholder.svg?height=400&width=400"}
                           alt="Vista previa"
@@ -518,6 +519,7 @@ export default function CategoriasPage() {
                         >
                           {uploadingImage ? "Subiendo..." : "Cambiar imagen"}
                         </Button>
+                        <p className="mt-2 text-xs text-gray-500">Así se ve en la tienda. Ideal: foto horizontal (por ejemplo 1600 × 670) con lo importante en el centro.</p>
                       </div>
                     </div>
                   </div>

@@ -11,14 +11,22 @@ const DISPLAYABLE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
 const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024
 const EXTENSION: Record<string, string> = { "image/webp": "webp", "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif" }
 
-// Uniform canvas size every uploaded image is normalized into. Images are
-// never cropped: they are scaled to fit inside this square and centered.
-// The canvas is left transparent (WebP supports alpha) so logos and other
-// images with transparent backgrounds keep it — a filled background would
-// bake a solid square behind them wherever they're displayed on a colored
-// surface (e.g. the store logo in the header).
-const CANVAS_SIZE = 1200
+// Lado más largo de la imagen guardada. Se conserva la proporción original: antes se metía todo
+// en un cuadrado con relleno transparente y en las tarjetas anchas (categorías, banners) se veían
+// franjas vacías a los costados.
+const MAX_SIDE = 1600
 const WEBP_QUALITY = 0.82
+
+/** Tamaño final: achica sin agrandar y, si se pide `square` (favicon), lo centra en un cuadrado. */
+export function targetSize(width: number, height: number, square = false) {
+  const scale = Math.min(1, MAX_SIDE / Math.max(width, height))
+  const drawWidth = Math.max(1, Math.round(width * scale))
+  const drawHeight = Math.max(1, Math.round(height * scale))
+  const side = Math.max(drawWidth, drawHeight)
+  const canvasWidth = square ? side : drawWidth
+  const canvasHeight = square ? side : drawHeight
+  return { canvasWidth, canvasHeight, drawWidth, drawHeight, offsetX: (canvasWidth - drawWidth) / 2, offsetY: (canvasHeight - drawHeight) / 2 }
+}
 
 export class ImageUploadError extends Error {}
 
@@ -34,6 +42,8 @@ export interface UploadOptions {
   removeBackground?: boolean
   /** Avisa si se pudo quitar el fondo. */
   onBackground?: (removed: boolean) => void
+  /** La centra en un cuadrado (para el ícono de la pestaña). */
+  square?: boolean
 }
 
 function toBaseFileName(fileName: string) {
@@ -77,30 +87,21 @@ async function resizeToWebp(file: File, options: UploadOptions = {}): Promise<Bl
       image = await load(await heicTo({ blob: file, type: "image/jpeg", quality: 0.92 }))
     }
 
+    const { canvasWidth, canvasHeight, drawWidth, drawHeight, offsetX, offsetY } = targetSize(image.width, image.height, options.square)
     const canvas = document.createElement("canvas")
-    canvas.width = CANVAS_SIZE
-    canvas.height = CANVAS_SIZE
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return null
 
-    // A freshly created canvas is already fully transparent, so no fill is
-    // needed here — that's what keeps source transparency intact.
-
-    // Scale to fit inside the square (never crop) and center it, mirroring
-    // the "contain" behavior of the previous server-side implementation.
-    const scale = Math.min(CANVAS_SIZE / image.width, CANVAS_SIZE / image.height)
-    const drawWidth = image.width * scale
-    const drawHeight = image.height * scale
-    const offsetX = (CANVAS_SIZE - drawWidth) / 2
-    const offsetY = (CANVAS_SIZE - drawHeight) / 2
-
+    // El lienzo nuevo es transparente: así los PNG con fondo transparente (logos) lo conservan.
     ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight)
 
     let output = canvas
     if (options.removeBackground) {
       // Se trabaja sobre la imagen ya escalada y se recorta el margen que queda vacío.
-      const pixels = ctx.getImageData(offsetX, offsetY, Math.round(drawWidth), Math.round(drawHeight))
+      const pixels = ctx.getImageData(offsetX, offsetY, drawWidth, drawHeight)
       const removed = removeSolidBackground(pixels.data, pixels.width, pixels.height)
       options.onBackground?.(removed)
       if (removed) {

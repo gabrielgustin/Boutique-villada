@@ -279,6 +279,7 @@ export function ImageField({
   fallback,
   clearLabel,
   removeBackground,
+  square,
 }: {
   label: string
   value: string | null
@@ -287,6 +288,8 @@ export function ImageField({
   clearLabel?: string
   /** Quita el fondo liso de la imagen al subirla (para logos). */
   removeBackground?: boolean
+  /** La guarda cuadrada (para el favicon). */
+  square?: boolean
 }) {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -305,11 +308,12 @@ export function ImageField({
           file,
           removeBackground
             ? {
+                square,
                 removeBackground: true,
                 onBackground: (removed) =>
                   setNotice(removed ? "Se quitó el fondo de la imagen." : "No se detectó un fondo liso: se subió tal cual."),
               }
-            : undefined,
+            : { square },
         ),
       )
     } catch (caught) {

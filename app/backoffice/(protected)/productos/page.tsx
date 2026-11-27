@@ -904,6 +904,7 @@ export default function ProductosPage() {
                         >
                           {uploadingImage ? "Subiendo..." : "Cambiar imagen"}
                         </Button>
+                        <p className="mt-2 text-xs text-gray-500">Ideal: foto vertical o cuadrada, con el producto centrado.</p>
                       </div>
                     </div>
                   </div>

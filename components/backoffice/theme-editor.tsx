@@ -407,7 +407,7 @@ function ImagesTab({ draft, change }: TabProps) {
         <ImageField label="Logo del encabezado" value={draft.logoUrl} fallback={DEFAULT_LOGO_URL} clearLabel="Volver al logo original" removeBackground onChange={(url) => change({ logoUrl: url })} />
       </Group>
       <Group title="En el navegador y al compartir">
-        <ImageField label="Ícono de la pestaña (favicon)" value={draft.faviconUrl} clearLabel="Volver al original" onChange={(url) => change({ faviconUrl: url })} />
+        <ImageField label="Ícono de la pestaña (favicon)" value={draft.faviconUrl} clearLabel="Volver al original" square onChange={(url) => change({ faviconUrl: url })} />
         <ImageField label="Imagen al compartir el enlace" value={draft.shareImageUrl} clearLabel="Quitar imagen" onChange={(url) => change({ shareImageUrl: url })} />
       </Group>
     </>
