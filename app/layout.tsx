@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Anton, Lato } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/toaster"
+import { DEFAULT_LOGO_URL } from "@/lib/theme"
 import "./globals.css"
 
 const lato = Lato({ subsets: ["latin"], weight: ["400", "700", "900"], variable: "--font-lato" })
@@ -10,6 +11,8 @@ const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton
 
 export const metadata: Metadata = {
   title: "ITS Boutique",
+  // Ícono de la pestaña para todo el sitio (portada y panel). La tienda (/app) usa el de "Personaliza tu App".
+  icons: { icon: DEFAULT_LOGO_URL, apple: DEFAULT_LOGO_URL },
 }
 
 // Toda la app lee de la base de datos en cada visita (con caché de datos, ver lib/db.ts):
